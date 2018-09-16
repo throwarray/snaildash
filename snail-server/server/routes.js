@@ -40,7 +40,7 @@ if (global.RegisterNetEvent) {
 	global.onNet('express:Register', function (username, password)
 	{
 		const src = global.source
-		const license = GetPlayerIdentifier(src, 2)
+		const license = GetPlayerIdentifier(src, 0)
 
 		if (license) {
 			const User = mongoose.model('User')
@@ -137,7 +137,7 @@ if (global.RegisterNetEvent) { // Set initiator URI
 	global.RegisterNetEvent('express:Remote')
 	global.onNet('express:Remote', function (remote) {
 		const src = global.source
-		const license = GetPlayerIdentifier(src,2)
+		const license = GetPlayerIdentifier(src, 0)
 		if (license)
 			PlayerRemotes[license] =  { source: src, remote }
 	})
