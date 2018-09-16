@@ -29,18 +29,18 @@ router.use(bodies.json())
 
 function RegistrationReply (src, err, res) {
 	setImmediate(function () {
-		global.emitNet('express:Register', src, err, res || false)
+		global.emitNet('snaildash:Register', src, err, res || false)
 	})
 }
 
 if (global.RegisterNetEvent) {
 	// Sign up
 	// TODO Signup with valid email for recovery
-	global.RegisterNetEvent('express:Register')
-	global.onNet('express:Register', function (username, password)
+	global.RegisterNetEvent('snaildash:Register')
+	global.onNet('snaildash:Register', function (username, password)
 	{
 		const src = global.source
-		const license = GetPlayerIdentifier(src, 0)
+		const license = global.GetPlayerIdentifier(src, 0)
 
 		if (license) {
 			const User = mongoose.model('User')
@@ -134,10 +134,10 @@ router.post('/login', function (req, res, next) {
 // PAIR WRTC CLIENTS
 
 if (global.RegisterNetEvent) { // Set initiator URI
-	global.RegisterNetEvent('express:Remote')
-	global.onNet('express:Remote', function (remote) {
+	global.RegisterNetEvent('snaildash:Remote')
+	global.onNet('snaildash:Remote', function (remote) {
 		const src = global.source
-		const license = GetPlayerIdentifier(src, 0)
+		const license = global.GetPlayerIdentifier(src, 0)
 		if (license)
 			PlayerRemotes[license] =  { source: src, remote }
 	})
