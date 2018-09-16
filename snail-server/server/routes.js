@@ -15,7 +15,7 @@ router.use(bodies.json())
 // 	next()
 // })
 
-function GetPlayerLicense (source) {
+/* function GetPlayerLicense (source) {
 	let i = 0, ident
 	const len = global.GetNumPlayerIdentifiers(source)
 
@@ -25,7 +25,7 @@ function GetPlayerLicense (source) {
 		if (ident && ident.startsWith('license'))
 			return ident
 	}
-}
+} */
 
 function RegistrationReply (src, err, res) {
 	setImmediate(function () {
@@ -40,7 +40,7 @@ if (global.RegisterNetEvent) {
 	global.onNet('express:Register', function (username, password)
 	{
 		const src = global.source
-		const license = GetPlayerLicense(src)
+		const license = GetPlayerIdentifier(src, "license")
 
 		if (license) {
 			const User = mongoose.model('User')
