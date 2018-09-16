@@ -68,9 +68,9 @@ if (global.RegisterNetEvent) {
 }
 
 router.all('/logout', function* () {
-	const xhr = !!(req.body && req.body.xhr)
+	const xhr = !!(this.request.query && this.request.query.xhr)
 
-	req.logout()
+	this.request.logout()
 
 	if (!xhr) res.redirect('/')
 	else res.json({ authenticated: false })
@@ -78,11 +78,11 @@ router.all('/logout', function* () {
 
 // TODO Clean this up
 router.post('/login', function* (next) {
-	const xhr = !!(req.body && req.body.xhr)
+	const xhr = !!(this.request.query && this.request.query.xhr)
 
 	// request is authenticated already
-	if (xhr && req.isAuthenticated()) {
-		res.json({ user: req.user.toJSON(), authenticated: true })
+	if (xhr && this.request.isAuthenticated()) {
+		this.body = JSON.stringify({ user: this.request.user.toJSON(), authenticated: true })
 		return
 	}
 
@@ -128,7 +128,7 @@ router.post('/login', function* (next) {
 
 			return res.redirect('/')
 		})
-	})(this.request, next)
+	})(this.request)
 })
 
 ////////////////////////////////////////////////////////////////////////////////
