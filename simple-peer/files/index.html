@@ -6,11 +6,9 @@
 	</head>
 	<body>
 		<script type="text/javascript">
-		let peer
-		let peerListeners
+		const peers = new Map()
+		const log = (/*...args*/) => { /* return console.log(...args) */ }
 
-		const autoOpen = false
-		const NOOP = ()=> {}
 		const DISPATCH_URL = `http://${GetParentResourceName()}/onmessage`
 		const dispatch = (actionName, payload, meta, error) => {
 			fetch(DISPATCH_URL, {
@@ -34,9 +32,6 @@
 				})
 			}) : void 0
 		}
-
-
-		const peers = new Map()
 
 		const API = Object.assign(Object.create(null), {
 			send (action) {
@@ -88,27 +83,27 @@
 					peers.set(id, peer)
 
 					peer.on('signal', function (data) {
-						console.log('NUI:signal(open)')
+						log('NUI:signal')
 						dispatch('signal', data, meta)
 					})
 
 					peer.on('error', function (err) {
-						console.log('NUI:error')
+						log('NUI:error')
 						dispatch('error', err.code || 'error', meta)
 					})
 
 					peer.on('connect', function () {
-						console.log('NUI:connect(ion)')
+						log('NUI:connection')
 						dispatch('connect', void 0, meta)
 					})
 
 					peer.on('close', function () {
-						console.log('NUI:close')
+						log('NUI:close')
 						dispatch('close', void 0, meta)
 					})
 
 					peer.on('data', function (data) {
-						console.log('NUI:data')
+						log('NUI:data')
 						dispatch('data', "" + data, meta)
 					})
 
