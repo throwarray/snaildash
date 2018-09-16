@@ -16,9 +16,13 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 const mongoose = require('mongoose')
-const express = require('express')
-const router = express()
-const server = require('http').createServer(router)
+const { setHttpCallback } = require('@citizenfx/http-wrapper');
+const Koa = require('koa');
+const bodyParser = require('koa-bodyparser')
+const session = require('koa-session')
+const e2k = require('koa-connect')
+const router = new Koa()
+
 // const io = require('socket.io')(server, { serveClient: false })
 
 const cfg = {
@@ -36,8 +40,8 @@ require(safepath('./server/auth.js'))(cfg)
 
 //require(safepath('./server/io.js'))(cfg)
 
-router.use(require(safepath('./server/routes.js')))
-router.use(express.static(safepath('./out')))
+router.use(e2k(require(safepath('./server/routes.js')).routes()))
+//router.use(express.static(safepath('./out')))
 
 //router.get('*', function (req, res) { handle(req, res) })
 
@@ -48,8 +52,6 @@ Promise.resolve(/*app.prepare()*/).then(() => {
 })
 
 mongoose.connection.once('open', function () {
-	server.listen(port, (err) => {
-		if (err) throw err
-		console.log(`> Ready on http://localhost:${port}`)
-	})
+	setHttpCallback(router.callback());
+	console.log(`> Ready on http://localhost:${port}`)
 })
