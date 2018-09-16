@@ -8,7 +8,7 @@ export function isAuthenticated (req)
 
 const isArray = a => Array.isArray(a)
 
-async function login (creds) {
+async function login (creds, withoutMessage) {
 	let response = void 0
 	let data = {}
 
@@ -31,7 +31,7 @@ async function login (creds) {
 		data.message = [data.message]
 
 	return {
-		message: data.message,
+		message: !withoutMessage? data.message : void 0,
 		authenticated: !!data.authenticated,
 		user: data.user
 	}
@@ -113,10 +113,11 @@ export function withAuth (Component) {
 			return true
 		}
 
-		async login (creds) {
-			if (creds === void 0) console.log('REFRESH LOGIN STATUS')
+		async login (creds, withoutMessage) {
+			if (creds === void 0 && withoutMessage)
+				console.log('REFRESH LOGIN STATUS')
 
-			const auth = await login(creds)
+			const auth = await login(creds, withoutMessage)
 
 			this.setState(auth || {})
 

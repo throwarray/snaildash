@@ -22,7 +22,7 @@ export default withAuth(class extends React.Component {
 	// Initial mount on client when prerendered or when live reloaded
 	componentDidMount () {
 		if (this.props.authenticated === void 0 && this.props.login)
-			this.props.login()
+			this.props.login(void 0, true)
 	}
 
 	render () {
