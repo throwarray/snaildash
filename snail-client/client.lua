@@ -27,7 +27,7 @@ local function CreatePeer ()
 			signal = function (action)
 				print('simple-peer:signal', action.payload)
 				if not connected then
-					TriggerServerEvent('express:Remote', action.payload)
+					TriggerServerEvent('snaildash:Remote', action.payload)
 				end
 			end,
 		}
@@ -40,8 +40,8 @@ local function CreatePeer ()
 			end
 		end)
 
-		RegisterNetEvent('express:Remote')
-		AddEventHandler('express:Remote', function (data)
+		RegisterNetEvent('snaildash:Remote')
+		AddEventHandler('snaildash:Remote', function (data)
 			dispatch({ type = 'connect', payload = data })
 		end)
 
@@ -98,8 +98,8 @@ Citizen.CreateThread(CreatePeer)
 -- 	[4] = 'License is registered already.', -- Error: Already registered
 -- }
 --
--- RegisterNetEvent('express:Register')
--- AddEventHandler('express:Register', function (err, success)
+-- RegisterNetEvent('snaildash:Register')
+-- AddEventHandler('snaildash:Register', function (err, success)
 -- 	if err then
 -- 		print(RegistrationErrors[err] or RegistrationErrors[1])
 -- 	else
@@ -107,4 +107,4 @@ Citizen.CreateThread(CreatePeer)
 -- 	end
 -- end)
 
--- TriggerServerEvent('express:Register', 'Bob', '123456')
+-- TriggerServerEvent('snaildash:Register', 'Bob', '123456')
