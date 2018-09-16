@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<script type="text/javascript" src="./simplepeer.min.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+		let peer
+		let peerListeners
+
+		const autoOpen = false
+		const NOOP = ()=> {}
+		const DISPATCH_URL = `http://${GetParentResourceName()}/onmessage`
+		const dispatch = (actionName, payload, meta, error) => {
+			fetch(DISPATCH_URL, {
+				"method": "POST",
+				"body": JSON.stringify({
+					type: actionName,
+					payload,
+					meta,
+					error
+				})
+			})
+		}
+
+		function InvokeFunctionRef (meta, ...payload) {
+			return meta && meta.callback ? fetch(DISPATCH_URL,  {
+				"method": "POST",
+				"body": JSON.stringify({
+					type: "callback",
+					payload,
+					meta
+				})
+			}) : void 0
+		}
+
+
+		const peers = new Map()
+
+		const API = Object.assign(Object.create(null), {
+			send (action) {
+				if (!action || !action.meta) return
+
+				const id = action.meta.id
+				const peer = peers.get(id)
+
+				if (peer) peer.send(JSON.stringify(action.payload))
+				InvokeFunctionRef(action.meta, !peer)
+			},
+
+			connect (action) {
+				if (!action || !action.meta) return
+
+				const id = action.meta.id
+				const peer = peers.get(id)
+
+				if (peer) peer.signal(action.payload)
+				InvokeFunctionRef(action.meta, !peer)
+			},
+
+			close (action) {
+				if (!action || !action.meta) return
+
+				const id = action.meta.id
+				const peer = peers.get(id)
+
+				if (peer) {
+					peers.delete(id)
+					peer.removeAllListeners()
+					peer.destroy()
+				}
+
+				InvokeFunctionRef(action.meta, !peer)
+			},
+
+			open (action) {
+				const id = action.meta.id
+
+				if (!peers.get(id)) {
+					const meta = { id }
+
+					const peer = new SimplePeer(action.payload || {
+						initiator: true,
+						trickle: false
+					})
+
+					peers.set(id, peer)
+
+					peer.on('signal', function (data) {
+						console.log('NUI:signal(open)')
+						dispatch('signal', data, meta)
+					})
+
+					peer.on('error', function (err) {
+						console.log('NUI:error')
+						dispatch('error', err.code || 'error', meta)
+					})
+
+					peer.on('connect', function () {
+						console.log('NUI:connect(ion)')
+						dispatch('connect', void 0, meta)
+					})
+
+					peer.on('close', function () {
+						console.log('NUI:close')
+						dispatch('close', void 0, meta)
+					})
+
+					peer.on('data', function (data) {
+						console.log('NUI:data')
+						dispatch('data', "" + data, meta)
+					})
+
+					InvokeFunctionRef(action.meta, false, id)
+				} else InvokeFunctionRef(action.meta, true, id)
+			}
+		})
+
+		window.addEventListener('message', function (evt) {
+			const handleAction = API[evt && evt.data && evt.data.type]
+			if (handleAction)
+				handleAction(evt.data)
+		})
+		</script>
+	</body>
+</html>
