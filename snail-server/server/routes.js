@@ -40,7 +40,7 @@ if (global.RegisterNetEvent) {
 	global.onNet('express:Register', function (username, password)
 	{
 		const src = global.source
-		const license = GetPlayerIdentifier(src, "license")
+		const license = GetPlayerIdentifier(src, 2)
 
 		if (license) {
 			const User = mongoose.model('User')
