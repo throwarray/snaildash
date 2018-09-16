@@ -171,7 +171,7 @@ router.post('/pair', function (req, res) {
 
 	setTimeout(function () {
 		if (global.TriggerClientEvent)
-			global.TriggerClientEvent('express:Remote', player.source, req.body.uri)
+			global.TriggerClientEvent('snaildash:Remote', player.source, req.body.uri)
 	}, 500)
 })
 
