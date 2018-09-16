@@ -20,7 +20,7 @@ const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser')
 const session = require('koa-session')
-const e2k = require('koa-connect')
+//const e2k = require('koa-connect')
 const router = new Koa()
 
 // const io = require('socket.io')(server, { serveClient: false })
@@ -40,7 +40,7 @@ require(safepath('./server/auth.js'))(cfg)
 
 //require(safepath('./server/io.js'))(cfg)
 
-router.use(e2k(require(safepath('./server/routes.js')).routes()))
+router.use(require(safepath('./server/routes.js')).routes())
 //router.use(express.static(safepath('./out')))
 
 //router.get('*', function (req, res) { handle(req, res) })

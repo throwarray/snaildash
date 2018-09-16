@@ -10,7 +10,7 @@ const PlayerRemotes = Object.create(null) // TODO Cleanup on Join | Disconnected
 router.use(bodies.urlencoded({ extended: true }))
 router.use(bodies.json())
 
-// router.use(function(req, res, next) {
+// router.use(function(, next) {
 // 	res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:3001')
 // 	res.header('Access-Control-Allow-Headers', 'X-Requested-With')
 // 	next()
@@ -67,7 +67,7 @@ if (global.RegisterNetEvent) {
 	})
 }
 
-router.all('/logout', (req, res) => {
+router.all('/logout', function* () {
 	const xhr = !!(req.body && req.body.xhr)
 
 	req.logout()
@@ -77,7 +77,7 @@ router.all('/logout', (req, res) => {
 })
 
 // TODO Clean this up
-router.post('/login', function (req, res, next) {
+router.post('/login', function* (next) {
 	const xhr = !!(req.body && req.body.xhr)
 
 	// request is authenticated already
@@ -128,7 +128,7 @@ router.post('/login', function (req, res, next) {
 
 			return res.redirect('/')
 		})
-	})(req, res, next)
+	})(this.request, next)
 })
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ if (global.RegisterNetEvent) { // Set initiator URI
 	})
 }
 
-router.get('/pair', function (req, res) { // Get initiator URI
+router.get('/pair', function* () { // Get initiator URI
 	if (!req.isAuthenticated())
 		return res.json({ message: 'unauthorized' })
 
@@ -157,7 +157,7 @@ router.get('/pair', function (req, res) { // Get initiator URI
 })
 
 
-router.post('/pair', function (req, res) {
+router.post('/pair', function* () {
 	if (!req.isAuthenticated())
 		return res.json({ message: 'unauthorized' })
 
