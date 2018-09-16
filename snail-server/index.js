@@ -20,6 +20,7 @@ const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser')
 const session = require('koa-session')
+const flash = require('koa-flash');
 //const e2k = require('koa-connect')
 const router = new Koa()
 
@@ -39,8 +40,11 @@ if (!process.env.MONGO_URL) throw new Error('MISSING ENV VARIABLE [MONGO_URL]')
 require(safepath('./server/auth.js'))(cfg)
 
 //require(safepath('./server/io.js'))(cfg)
-
+router.use(flash())
+router.use(session());
 router.use(require(safepath('./server/routes.js')).routes())
+
+
 //router.use(express.static(safepath('./out')))
 
 //router.get('*', function (req, res) { handle(req, res) })

@@ -99,19 +99,17 @@ router.post('/login', function* (next) {
 
 		if (!user) {
 			if (!xhr) {
-				req.flash('message', message)
+				this.request.flash('message', message)
 
 				return res.redirect('/login')
 			}
 
-			return res.json({
-				message,
-				authenticated: false
-			})
+			this.body = JSON.stringify({message, authenticated: false })
+			return
 		}
 
-		req.logIn(user, function(err) {
-			req.flash('message') // clear
+		this.request.login(user, function(err) {
+			this.request.flash('message') // clear
 
 			if (err) {
 				if (xhr) return res.json({
