@@ -137,7 +137,7 @@ if (global.RegisterNetEvent) { // Set initiator URI
 	global.RegisterNetEvent('express:Remote')
 	global.onNet('express:Remote', function (remote) {
 		const src = global.source
-		const license = GetPlayerLicense(src)
+		const license = GetPlayerIdentifier(src,2)
 		if (license)
 			PlayerRemotes[license] =  { source: src, remote }
 	})
