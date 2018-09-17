@@ -78,7 +78,7 @@ router.get("/user/verify",(req,res)=>{
 	
 
 	mongoose.model("User").findOneAndRemove({token:token}, (result,err) => {
-		if (!result || err) return res.json({verified=false,error=err})
+		if (!result || err) return res.json({verified:false,error:err})
 		console.log(`VERIFIED USER: ${result.email}`)
 		const verifieduser = new VerifiedUser({email:result.email, password:result.password,license:result.license})
 		verifieduser.save(function(err) {
