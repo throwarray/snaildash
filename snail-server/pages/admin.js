@@ -39,7 +39,7 @@ export default class Page extends React.Component {
 		})
 
 		peer.on('signal', function (data) {
-			console.log('pairing')
+			console.log('peer-pairing')
 
 			fetch('/pair', {
 				method: 'POST',
