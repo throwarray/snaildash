@@ -79,10 +79,12 @@ export function withAuth (Component) {
 				user: ctx.req.user,
 				authenticated: isAuthenticated(ctx.req),
 				pageProps,
-				exporting
+				exporting,
+				isServer
 			} : {
 				pageProps,
-				exporting
+				exporting,
+				isServer: false
 			}
 		}
 

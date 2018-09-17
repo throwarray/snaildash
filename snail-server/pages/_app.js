@@ -31,10 +31,10 @@ export default withAuth(class extends React.Component {
 			exporting, exported, isServer
 		} = this.props
 
-		console.log('XRENDER PAGE', router.route)
+		if (!isServer && !exporting)
+			console.log('RENDER PAGE', router.route)
 
 		return <Container>
-
 			<Head>
 				<meta key="viewport" name="viewport" content="initial-scale=1.0, width=device-width" />
 				<link key="fontawesome" rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossOrigin="anonymous"/>

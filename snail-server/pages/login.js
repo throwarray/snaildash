@@ -28,7 +28,8 @@ export default class extends React.Component {
 
 	render () {
 		let { message, exporting, exported } = this.props
-		console.log('RENDER LOGIN', message)
+
+		// console.log('RENDER LOGIN', message)
 
 		return <form action="/login" method="POST" onSubmit={this.login} className="main-content" style={{ flex: 1 }}>
 			<Head>
