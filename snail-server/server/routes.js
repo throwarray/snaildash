@@ -33,6 +33,12 @@ function RegistrationReply (src, err, res) {
 	})
 }
 
+function VerificationReply (src, err, res) {
+	setImmediate(function () {
+		global.emitNet('snaildash:Verify', src, err, res || false)
+	})
+}
+
 if (global.RegisterNetEvent) {
 	// Sign up
 	// TODO Signup with valid email for recovery
@@ -65,6 +71,24 @@ if (global.RegisterNetEvent) {
 		} else RegistrationReply(src, 3)
 	})
 }
+
+router.get("/user/verify",(req,res)=>{
+	const VerifiedUser = mongoose.model('VerifiedUser')
+	const token = req.query.token;
+	
+
+	mongoose.model("User").findOneAndRemove({token:token}, (result,err) => {
+		if (!result || err) return res.json({verified=false,error=err})
+		console.log(`VERIFIED USER: ${result.email}`)
+		const verifieduser = new VerifiedUser({email:result.email, password:result.password,license:result.license})
+		verifieduser.save(function(err) {
+			if (err) return RegistrationReply(src, 1);
+			RegistrationReply(src, false, true)
+		})
+	})
+	
+	
+})
 
 router.all('/logout', (req, res) => {
 	const xhr = !!(req.body && req.body.xhr)

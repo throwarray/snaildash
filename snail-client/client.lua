@@ -107,4 +107,13 @@ Citizen.CreateThread(CreatePeer)
 -- 	end
 -- end)
 
--- TriggerServerEvent('snaildash:Register', 'Bob', '123456')
+-- TriggerServerEvent('snaildash:Register', 'Bob@gmail.com', '123456')
+
+--RegisterNetEvent('snaildash:Verify')
+-- AddEventHandler('snaildash:Verify', function (err, success)
+-- 	if err then
+-- 		print(RegistrationErrors[err] or RegistrationErrors[1])
+-- 	else
+-- 		print('Verify user successfully')
+-- 	end
+-- end)

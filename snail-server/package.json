@@ -28,6 +28,7 @@
     "mongoose": "^5.2.14",
     "next": "^6.1.2",
     "next-page-transitions": "^1.0.0-alpha.4",
+    "nodemailer": "^4.6.8",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "react": "^16.5.1",

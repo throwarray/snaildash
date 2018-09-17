@@ -1,8 +1,15 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const Schema = mongoose.Schema
-const UserSchema = Schema({
-	username: { type: String, required: true, unique: true },
+const NotVerifiedUserSchema = Schema({
+	email: { type: String, required: true, unique: true },
+	password: { type: String, required: true, minlength: 6, maxlength: 18 },
+	license: { type: String, required: true, unique: true },
+	token: { type: String, required: true, unique: true }
+})
+
+const VerifiedUserSchema = Schema({
+	email: { type: String, required: true, unique: true },
 	password: { type: String, required: true, minlength: 6, maxlength: 18 },
 	license: { type: String, required: true, unique: true }
 })
@@ -10,13 +17,26 @@ const UserSchema = Schema({
 
 function UTF8Length (s) { return ~-encodeURI(s).split(/%..|./).length }
 
-UserSchema.pre('save', function (next) {
+function makeid() {
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  
+	for (var i = 0; i < 50; i++)
+	  text += possible.charAt(Math.floor(Math.random() * possible.length));
+  
+	return text;
+  }
+
+NotVerifiedUserSchema.pre('save', function (next) {
 	const user = this
 	const saltRounds = 10
 
 	if (!this.isModified('password')) return next()
 
 	if (UTF8Length(user.password) > 18) return next(true)
+
+	const token = makeid()
+	//TODO: SEND EMAIL TO USER (nodemailer)
 
 	bcrypt.hash(user.password, saltRounds, function (err, hash) {
 		if (err) return next(err)
@@ -26,6 +46,8 @@ UserSchema.pre('save', function (next) {
 	})
 })
 
+
+
 const comparePassword = function (user, password, cb) {
 	bcrypt.compare(password, user.password, function (err, res) {
 		err = err || !res
@@ -34,7 +56,9 @@ const comparePassword = function (user, password, cb) {
 	})
 }
 
-mongoose.model('User', UserSchema)
+mongoose.model('User', NotVerifiedUserSchema)
+mongoose.model('VerifiedUser', VerifiedUserSchema)
+
 
 // mongoose.model('User').ensureIndexes()
 
@@ -46,9 +70,9 @@ const MongoStore = require('connect-mongo')(session)
 const cookieParser = require('cookie-parser')()
 const { Strategy } = require('passport-local')
 
-function LocalStrategy (username, password, cb)
+function LocalStrategy (email, password, cb)
 {
-	mongoose.model('User').findOne({ username }, function(err, user) {
+	mongoose.model('VerifiedUser').findOne({ email }, function(err, user) {
 		if (err) return cb(err)
 		if (!user) return cb(null, false)
 
