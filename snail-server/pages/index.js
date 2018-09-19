@@ -17,7 +17,7 @@ const Page = ({ stars, /* authenticated,*/ user }) => console.log('INDEX RENDER'
 		<div className="hero-body">
 			<div className="container">
 				<h1 className="title">
-					Welcome { user ? user.username : '' }
+					Welcome { user ? user.email : '' }
 				</h1>
 				<h2 className="subtitle">
 					Lorem ipsum dolor sit amet
