@@ -18,7 +18,7 @@ const NotVerifiedUserSchema = Schema({
 
 const VerifiedUserSchema = Schema({
 	email: { type: String, required: true, unique: true },
-	password: { type: String, required: true, minlength: 6, maxlength: 18 },
+	password: { type: String, required: true },
 	license: { type: String, required: true, unique: true }
 })
 
@@ -54,6 +54,15 @@ NotVerifiedUserSchema.pre('save', function (next) {
 		next()
 	})
 })
+
+NotVerifiedUserSchema.path('email').validate(function (email,next) {
+	var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+	if (!emailRegex.test(email)) {
+		return next(false)
+	}
+
+	return next()
+ }, 'INVALID EMAIL!!!')
 
 
 
