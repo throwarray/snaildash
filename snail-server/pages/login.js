@@ -39,7 +39,7 @@ export default class extends React.Component {
 				<div className="field">
 					<label className="label is-large">Login</label>
 					<p className="control has-icons-left has-icons-right">
-						<input name="username" ref={this.refEmail} className="input" type="text" placeholder="Username"/>
+						<input name="username" ref={this.refEmail} className="input" type="email" placeholder="Email"/>
 						<span className="icon is-small is-left">
 							<i className="fas fa-envelope"></i>
 						</span>

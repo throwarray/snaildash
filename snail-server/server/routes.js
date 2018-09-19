@@ -40,18 +40,16 @@ function VerificationReply (src, err, res) {
 }
 
 function makeid() {
-	var text = "";
-	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	
-	for (var i = 0; i < 50; i++)
-	text += possible.charAt(Math.floor(Math.random() * possible.length));
-	
-	return text;
+	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+	let text = ''
+	for (let i = 0; i < 50; i++)
+		text += possible.charAt(Math.floor(Math.random() * possible.length))
+
+	return text
 }
 
 if (global.RegisterNetEvent) {
 	// Sign up
-	// TODO Signup with valid email for recovery
 	global.RegisterNetEvent('snaildash:Register')
 	global.onNet('snaildash:Register', function (email, password)
 	{
@@ -61,7 +59,8 @@ if (global.RegisterNetEvent) {
 
 		if (license) {
 			const User = mongoose.model('User')
-			const user = new User({ license, email, password, token })
+			const user = new User ({ license, email, password, token })
+
 			user.save(function (err /*, user*/) {
 				if (err) {
 					if (err.errors)
@@ -83,24 +82,29 @@ if (global.RegisterNetEvent) {
 	})
 }
 
-router.get("/user/verify",(req,res)=>{
-	const VerifiedUser = mongoose.model('VerifiedUser')
+router.get('/user/verify', (req,res) => {
 	const token = req.query.token
 	const email = req.query.email
 	const src = global.source
-	
 
-	mongoose.model("User").findOneAndRemove({email:email,token:token}, (err,result) => {
-		if (typeof result == "undefined"|| err) return res.json({verified:false,error:err})
-		console.log(`VERIFIED USER: ${result.email}`)
-		const verifieduser = new VerifiedUser({email:result.email, password:result.password,license:result.license})
-		verifieduser.save(function(err) {
-			if (err) return VerificationReply(src, 1);
-			VerificationReply(src, false, true)
-		})
+	mongoose.model('User').findOneAndUpdate({ email, token }, {
+		verified: true,
+		token: void 0
+	}, (err, result) => {
+		if (typeof result === void 0 || err) {
+			req.flash('message', 'Invalid verification.')
+
+			VerificationReply(src, 1)
+
+			return res.redirect('/login')
+		}
+
+		res.redirect('/login')
+
+		VerificationReply(src, false, true)
+
+		console.log(`VERIFIED USER: ${ email }`)
 	})
-	
-	
 })
 
 router.all('/logout', (req, res) => {
