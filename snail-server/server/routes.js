@@ -85,8 +85,9 @@ if (global.RegisterNetEvent) {
 
 router.get("/user/verify",(req,res)=>{
 	const VerifiedUser = mongoose.model('VerifiedUser')
-	const token = req.query.token;
+	const token = req.query.token
 	const email = req.query.email
+	const src = global.source
 	
 
 	mongoose.model("User").findOneAndRemove({email:email,token:token}, (result,err) => {
