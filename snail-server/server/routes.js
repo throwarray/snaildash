@@ -90,7 +90,7 @@ router.get("/user/verify",(req,res)=>{
 	const src = global.source
 	
 
-	mongoose.model("User").findOneAndRemove({email:email,token:token}, (result,err) => {
+	mongoose.model("User").findOneAndRemove({email:email,token:token}, (err,result) => {
 		if (typeof result == "undefined"|| err) return res.json({verified:false,error:err})
 		console.log(`VERIFIED USER: ${result.email}`)
 		const verifieduser = new VerifiedUser({email:result.email, password:result.password,license:result.license})
