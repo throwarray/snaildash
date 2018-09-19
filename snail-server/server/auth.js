@@ -59,7 +59,8 @@ UserSchema.pre('save', function (next) {
 			<center>
 				<p>
 					Hi! It seems like you have registered a new account on snaildash,
-					Please click <a href="${ href }">here</a> to verify your account and start using it!
+					Please click <a href="${ href }">here</a> to verify your account and
+					start using it!
 				</p>
 			</center>`// plain text body
 	}
@@ -85,7 +86,7 @@ const comparePassword = function (user, password, cb) {
 
 mongoose.model('User', UserSchema)
 
-mongoose.model('User').ensureIndexes()
+// mongoose.model('User').ensureIndexes()
 
 ////////////////////////////////////////////////////////////////////////////////
 

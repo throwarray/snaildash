@@ -14,6 +14,9 @@ WIP
 	NODE_ENV=production
 	MONGO_URL=mongodb://<username>:<password>@<address>/<db>
 	SESSION_SECRET=keyboard snail
+	APPLICATION_URL=http://localhost:3000
+	EMAIL_ADDRESS=<email>@gmail.com
+	EMAIL_PASSWORD=<password>
 	```
 	You can get a free MongoDB database at [https://mlab.com/](https://mlab.com/)
 
