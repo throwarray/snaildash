@@ -37,7 +37,7 @@ NotVerifiedUserSchema.pre('save', function (next) {
 		from: process.env.EMAIL_ADDRESS, // sender address
 		to: user.email, // list of receivers
 		subject: 'SnailDash: Account Verification', // Subject line
-		html: `<center><h1>SNAILDASH</h1></center><br><center><p>Hi! It seems like you have registered a new account on snaildash, please click HERE<a href="${process.env.APPLICATION_URL + '/user/verify/?token=' + user.token+'&email=' + user.email}" to verify your account and start using it!</p></center>`// plain text body
+		html: `<center><h1>SNAILDASH</h1></center><br><center><p>Hi! It seems like you have registered a new account on snaildash, please click <a href="${process.env.APPLICATION_URL + '/user/verify/?token=' + user.token+'&email=' + user.email}">HERE</a> to verify your account and start using it!</p></center>`// plain text body
 	};
 	
 	transporter.sendMail(mailOptions, function (err, info) {
