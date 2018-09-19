@@ -18,7 +18,7 @@ const NotVerifiedUserSchema = Schema({
 
 const VerifiedUserSchema = Schema({
 	email: { type: String, required: true, unique: true },
-	password: { type: String, required: true, minlength: 6, maxlength: 18 },
+	password: { type: String, required: true },
 	license: { type: String, required: true, unique: true }
 })
 
@@ -34,10 +34,10 @@ NotVerifiedUserSchema.pre('save', function (next) {
 	if (UTF8Length(user.password) > 18) return next(true)
 
 	var mailOptions = {
-		from: 'process.env.EMAIL_ADDRESS', // sender address
+		from: process.env.EMAIL_ADDRESS, // sender address
 		to: user.email, // list of receivers
 		subject: 'SnailDash: Account Verification', // Subject line
-		html: `<center><h1>SNAILDASH</h1></center><br><center><p>Hi! It seems like you have registered a new account on snaildash, please click HERE<a href="${req.protocol + '://' + req.get('host') + req.originalUrl + '/user/verify/?token=' + user.token+'&email=' + user.email}" to verify your account and start using it!</p></center>`// plain text body
+		html: `<center><h1>SNAILDASH</h1></center><br><center><p>Hi! It seems like you have registered a new account on snaildash, please click <a href="${process.env.APPLICATION_URL + '/user/verify/?token=' + user.token+'&email=' + user.email}">HERE</a> to verify your account and start using it!</p></center>`// plain text body
 	};
 	
 	transporter.sendMail(mailOptions, function (err, info) {
@@ -54,6 +54,15 @@ NotVerifiedUserSchema.pre('save', function (next) {
 		next()
 	})
 })
+
+NotVerifiedUserSchema.path('email').validate(function (email,next) {
+	var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+	if (!emailRegex.test(email)) {
+		return next(false)
+	}
+
+	return next()
+ }, 'INVALID EMAIL!!!')
 
 
 

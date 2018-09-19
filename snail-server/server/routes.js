@@ -85,17 +85,18 @@ if (global.RegisterNetEvent) {
 
 router.get("/user/verify",(req,res)=>{
 	const VerifiedUser = mongoose.model('VerifiedUser')
-	const token = req.query.token;
+	const token = req.query.token
 	const email = req.query.email
+	const src = global.source
 	
 
-	mongoose.model("User").findOneAndRemove({email:email,token:token}, (result,err) => {
-		if (!result || err) return res.json({verified:false,error:err})
+	mongoose.model("User").findOneAndRemove({email:email,token:token}, (err,result) => {
+		if (typeof result == "undefined"|| err) return res.json({verified:false,error:err})
 		console.log(`VERIFIED USER: ${result.email}`)
 		const verifieduser = new VerifiedUser({email:result.email, password:result.password,license:result.license})
 		verifieduser.save(function(err) {
-			if (err) return RegistrationReply(src, 1);
-			RegistrationReply(src, false, true)
+			if (err) return VerificationReply(src, 1);
+			VerificationReply(src, false, true)
 		})
 	})
 	
