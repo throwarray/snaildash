@@ -25,16 +25,6 @@ const VerifiedUserSchema = Schema({
 
 function UTF8Length (s) { return ~-encodeURI(s).split(/%..|./).length }
 
-function makeid() {
-	var text = "";
-	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	
-	for (var i = 0; i < 50; i++)
-	text += possible.charAt(Math.floor(Math.random() * possible.length));
-	
-	return text;
-}
-
 NotVerifiedUserSchema.pre('save', function (next) {
 	const user = this
 	const saltRounds = 10
@@ -42,8 +32,7 @@ NotVerifiedUserSchema.pre('save', function (next) {
 	if (!this.isModified('password')) return next()
 	
 	if (UTF8Length(user.password) > 18) return next(true)
-	
-	var token = makeid()
+
 	var mailOptions = {
 		from: 'process.env.EMAIL_ADDRESS', // sender address
 		to: user.email, // list of receivers
