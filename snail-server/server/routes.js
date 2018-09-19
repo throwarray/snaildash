@@ -39,18 +39,29 @@ function VerificationReply (src, err, res) {
 	})
 }
 
+function makeid() {
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	
+	for (var i = 0; i < 50; i++)
+	text += possible.charAt(Math.floor(Math.random() * possible.length));
+	
+	return text;
+}
+
 if (global.RegisterNetEvent) {
 	// Sign up
 	// TODO Signup with valid email for recovery
 	global.RegisterNetEvent('snaildash:Register')
-	global.onNet('snaildash:Register', function (username, password)
+	global.onNet('snaildash:Register', function (email, password)
 	{
 		const src = global.source
 		const license = global.GetPlayerIdentifier(src, 0)
+		const token = makeid()
 
 		if (license) {
 			const User = mongoose.model('User')
-			const user = new User({ license, username, password })
+			const user = new User({ license, email, password, token })
 			user.save(function (err /*, user*/) {
 				if (err) {
 					if (err.errors)
