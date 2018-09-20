@@ -11,7 +11,6 @@ WIP
 
 	```
 	PORT=3000
-	NODE_ENV=production
 	MONGO_URL=mongodb://<username>:<password>@<address>/<db>
 	SESSION_SECRET=keyboard snail
 	APPLICATION_URL=http://localhost:3000

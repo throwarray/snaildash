@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node index",
-    "build": "rimraf ./.next ./out && next build && next export",
-    "start": "next start"
+    "build": "rimraf ./.next ./out && next build && next export"
   },
   "author": "",
   "license": "ISC",
