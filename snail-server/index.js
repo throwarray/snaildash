@@ -10,10 +10,10 @@ require('dotenv').config({ path: safepath('./server/.env') })
 const env = process.env
 const port = parseInt(env.PORT, 10) || 3000
 
-// const dev = env.NODE_ENV !== 'production'
-// const next = require('next')
-// const app = next({ dev })
-// const handle = app.getRequestHandler()
+const dev = env.NODE_ENV !== 'production'
+const next = require('next')
+const app = next({ dev })
+const handle = app.getRequestHandler()
 
 const mongoose = require('mongoose')
 const express = require('express')
@@ -22,7 +22,7 @@ const server = require('http').createServer(router)
 // const io = require('socket.io')(server, { serveClient: false })
 
 const cfg = {
-	// app,
+	app,
 	// io,
 	server,
 	router,
