@@ -39,7 +39,7 @@ require(safepath('./server/auth.js'))(cfg)
 router.use(require(safepath('./server/routes.js')))
 router.use(express.static(safepath('./out')))
 
-//router.get('*', function (req, res) { handle(req, res) })
+router.get('/*', function (req, res) { handle(req, res) })
 
 Promise.resolve(/*app.prepare()*/).then(() => {
 	return mongoose.connect(env.MONGO_URL, { useNewUrlParser: true })

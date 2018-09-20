@@ -96,7 +96,7 @@ class Header extends React.PureComponent {
 							Dashboard
 						</a>
 					</Link>
-					<Link activeClassName="active" scroll={false} href='/Stats'>
+					<Link activeClassName="active" scroll={false} href='/stats'>
 						<a className="navbar-item" style={{ display: authenticated? 'flex' : 'flex' }} onClick={this.closeMenu}>
 							Stats
 						</a>
