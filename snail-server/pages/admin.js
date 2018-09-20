@@ -132,9 +132,6 @@ export default class Page extends React.Component {
 		}
 
 		return <div className='main-content'>
-			<style jsx>{`
-				.main-content { flex:1; }
-			`}</style>
 			{ status }
 			{ this.state.stats ?
 				<div>Health: { this.state.stats.health }</div>: null

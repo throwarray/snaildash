@@ -39,6 +39,9 @@ export default withAuth(class extends React.Component {
 				<meta key="viewport" name="viewport" content="initial-scale=1.0, width=device-width" />
 				<link key="fontawesome" rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossOrigin="anonymous"/>
 				<style key="layout">{`
+					.main-content {
+						flex: 1;
+					}
 					#__next {
 						display: flex;
 						flex-direction: column;

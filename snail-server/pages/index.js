@@ -3,12 +3,11 @@ import Head from 'next/head'
 import React from 'react'
 
 const styles = {
-	stretch : { flex: '1' },
 	marginTop: { marginTop: '1em' }
 }
 
 
-const Page = ({ stars, /* authenticated,*/ user }) => console.log('INDEX RENDER') || <div className="main-content" style={styles.stretch}>
+const Page = ({ /* authenticated,*/ user }) => <div className="main-content">
 	<Head>
 		<title key="title">Welcome to Homepage</title>
 	</Head>
@@ -33,15 +32,15 @@ const Page = ({ stars, /* authenticated,*/ user }) => console.log('INDEX RENDER'
 
 		<div className="field is-grouped">
 			<p className="control">
-				<a className="button is-large" href="https://github.com" target="_blank">
+				<a className="button is-large" href="https://github.com/throwarray/snaildash" target="_blank">
 					<span className="icon">
 						<i className="fab fa-github" aria-hidden="true"></i>
 					</span>
-					<span>Github - { stars }</span>
+					<span>Github</span>
 				</a>
 			</p>
 			<p className="control">
-				<a className="button is-large is-primary" href="https://github.com" target="_blank">
+				<a className="button is-large is-primary" href="https://github.com/throwarray/snaildash/archive/master.zip" target="_blank">
 					<span className="icon">
 						<i className="fas fa-download" aria-hidden="true"></i>
 					</span>

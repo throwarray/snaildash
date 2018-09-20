@@ -96,7 +96,7 @@ class Header extends React.PureComponent {
 							Dashboard
 						</a>
 					</Link>
-					<Link activeClassName="active" scroll={false} href='/stats'>
+					<Link activeClassName="active" scroll={false} href='/Stats'>
 						<a className="navbar-item" style={{ display: authenticated? 'flex' : 'flex' }} onClick={this.closeMenu}>
 							Stats
 						</a>
@@ -115,21 +115,21 @@ class Header extends React.PureComponent {
 					<div className="navbar-item">
 						<div className="field is-grouped is-hidden-touch">
 							<p className="control">
-								<a className="button is-small" href="https://github.com" target="_blank">
+								<a className="button is-small" href="https://github.com/throwarray/snaildash" target="_blank">
 									<span className="icon">
 										<i className="fab fa-github" aria-hidden="true"></i>
 									</span>
 									<span>Github</span>
 								</a>
 							</p>
-							<p className="control">
+							{/* <p className="control">
 								<a className="button is-small is-primary" href="https://github.com" target="_blank">
 									<span className="icon">
 										<i className="fas fa-download" aria-hidden="true"></i>
 									</span>
 									<span>Download</span>
 								</a>
-							</p>
+							</p> */}
 						</div>
 					</div>
 				</div>

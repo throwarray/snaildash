@@ -31,7 +31,7 @@ export default class extends React.Component {
 
 		// console.log('RENDER LOGIN', message)
 
-		return <form action="/login" method="POST" onSubmit={this.login} className="main-content" style={{ flex: 1 }}>
+		return <form action="/login" method="POST" onSubmit={this.login} className="main-content">
 			<Head>
 				<title key="title">Welcome to Login</title>
 			</Head>
