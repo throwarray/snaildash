@@ -93,24 +93,28 @@ Citizen.CreateThread(CreatePeer)
 
 -- local RegistrationErrors = {
 -- 	[1] = 'Form failed validation.', -- Error: failed validation
--- 	[2] = 'Username is already in use.', -- Error: Username in use
+-- 	[2] = 'Email is already in use.', -- Error: Email in use
 -- 	[3] = 'Failed to save user.', -- Error: Failed to save user
 -- 	[4] = 'License is registered already.', -- Error: Already registered
 -- }
 --
 -- RegisterNetEvent('snaildash:Register')
--- AddEventHandler('snaildash:Register', function (err, success)
+-- AddEventHandler('snaildash:Register', function (err, isRegistered)
 -- 	if err then
--- 		print(RegistrationErrors[err] or RegistrationErrors[1])
+-- 		if err == 4 and isRegistered then
+-- 			print('Account is created and verified')
+-- 		else
+-- 			print(RegistrationErrors[err] or RegistrationErrors[1])
+-- 		end
 -- 	else
 -- 		print('Registered user successfully')
 -- 	end
 -- end)
-
+--
 -- TriggerServerEvent('snaildash:Register', 'Bob@gmail.com', '123456')
-
---RegisterNetEvent('snaildash:Verify')
--- AddEventHandler('snaildash:Verify', function (err, success)
+--
+-- RegisterNetEvent('snaildash:Verify')
+-- AddEventHandler('snaildash:Verify', function (err, isRegistered)
 -- 	if err then
 -- 		print(RegistrationErrors[err] or RegistrationErrors[1])
 -- 	else

@@ -4,8 +4,6 @@ const mongoose = require('mongoose')
 const router = require('express').Router()
 const PlayerRemotes = Object.create(null) // TODO Cleanup on Join | Disconnected
 
-// const { ensureLoggedIn } = require('connect-ensure-login')
-
 router.use(bodies.urlencoded({ extended: true }))
 router.use(bodies.json())
 
@@ -15,17 +13,15 @@ router.use(bodies.json())
 // 	next()
 // })
 
-/* function GetPlayerLicense (source) {
+function GetPlayerLicense (source) {
 	let i = 0, ident
 	const len = global.GetNumPlayerIdentifiers(source)
 
-	for (; i < len; i++)
-	{
+	for (; i < len; i++) {
 		ident = global.GetPlayerIdentifier(source, i)
-		if (ident && ident.startsWith('license'))
-			return ident
+		if (ident && ident.startsWith('license')) return ident
 	}
-} */
+}
 
 function RegistrationReply (src, err, res) {
 	setImmediate(function () {
@@ -48,10 +44,10 @@ if (global.RegisterNetEvent) {
 	global.onNet('snaildash:Register', function (email, password)
 	{
 		const src = global.source
-		const license = global.GetPlayerIdentifier(src, 0)
-		const token = makeid()
+		const license = GetPlayerLicense(src)
 
 		if (license) {
+			const token = makeid()
 			const User = mongoose.model('User')
 			const user = new User ({ license, email, password, token })
 
@@ -60,18 +56,16 @@ if (global.RegisterNetEvent) {
 					if (err.errors)
 						RegistrationReply(src, 1) // Error: Failed to validate user
 					else if (err.message.startsWith('E11000 duplicate')) {
-						if (err.message.indexOf('license') != -1)
-							RegistrationReply(src, 4) // Error: Already registered
-						else
-							RegistrationReply(src, 2) // Error: Duplicate user
+						// Error: Duplicate License || Email already in use
+						mongoose.model('User').findOne({ license }, function (err, user) {
+							RegistrationReply(src, user ? 4 : 2, user && user.verified)
+						})
 					}
 					else
 						RegistrationReply(src, 3) // Error: Failed to save user
 				} else
-					RegistrationReply(src, false, true) // Success: User registered
+					RegistrationReply(src, false, false) // Success: User registered
 			})
-
-			if (process._tickCallback) process._tickCallback()
 		} else RegistrationReply(src, 3)
 	})
 }
@@ -174,7 +168,7 @@ if (global.RegisterNetEvent) { // Set initiator URI
 	global.RegisterNetEvent('snaildash:Remote')
 	global.onNet('snaildash:Remote', function (remote) {
 		const src = global.source
-		const license = global.GetPlayerIdentifier(src, 0)
+		const license = GetPlayerLicense(src)
 		if (license)
 			PlayerRemotes[license] =  { source: src, remote }
 	})
