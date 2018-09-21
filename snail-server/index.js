@@ -1,12 +1,8 @@
 const path = require('path')
 const resourcePath = global.GetResourcePath ?
-	global.GetResourcePath(global.GetCurrentResourceName()):
-	__dirname
+	global.GetResourcePath(global.GetCurrentResourceName()): __dirname
 
 const safepath = url => path.join(resourcePath, url)
-
-require('dotenv').config({ path: safepath('./server/.env') })
-
 const env = process.env
 const port = parseInt(env.PORT, 10) || 3000
 const dev = env.NODE_ENV == 'development'
@@ -19,7 +15,9 @@ if (dev) {
 	next = require('next')
 	app = next({ dev })
 	handle = app.getRequestHandler()
-}
+} else require('dotenv').config({
+	path: safepath('./server/.env')
+})
 
 const mongoose = require('mongoose')
 const express = require('express')
@@ -58,6 +56,7 @@ Promise.resolve(dev? app.prepare() : true).then(() => {
 mongoose.connection.once('open', function () {
 	server.listen(port, (err) => {
 		if (err) throw err
+
 		console.log(`> Ready on http://localhost:${port}`)
 	})
 })

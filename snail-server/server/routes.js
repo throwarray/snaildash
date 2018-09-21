@@ -33,12 +33,6 @@ function RegistrationReply (src, err, res) {
 	})
 }
 
-function VerificationReply (src, err, res) {
-	setImmediate(function () {
-		global.emitNet('snaildash:Verify', src, err, res || false)
-	})
-}
-
 function makeid() {
 	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 	let text = ''
@@ -85,23 +79,25 @@ if (global.RegisterNetEvent) {
 router.get('/user/verify', (req,res) => {
 	const token = req.query.token
 	const email = req.query.email
-	const src = global.source
 
 	mongoose.model('User').findOneAndUpdate({ email, token }, {
 		verified: true,
 		token: void 0
 	}, (err, result) => {
+
 		if (typeof result === void 0 || err) {
 			req.flash('message', 'Invalid verification.')
-
-			VerificationReply(src, 1)
 
 			return res.redirect('/login')
 		}
 
 		res.redirect('/login')
 
-		VerificationReply(src, false, true)
+		const client = PlayerRemotes[result.license]
+
+		if (client) setImmediate(function () {
+			global.emitNet('snaildash:Verify', client.source, false, true)
+		})
 
 		console.log(`VERIFIED USER: ${ email }`)
 	})

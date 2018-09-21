@@ -45,7 +45,8 @@ export class Policy extends React.Component {
 const Footer = ()=> <footer className="footer">
 	<div className="content has-text-centered">
 		<p>
-			<strong>SNAIL DASH</strong> by <a href="https://jgthms.com">throwarray and IceHax</a>. The source code is licensed <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+			<strong>SNAIL DASH</strong> by <a href="https://github.com/throwarray">throwarray</a> and <a href="https://github.com/vecchiotom">IceHax</a>.
+			The source code is licensed <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
 		</p>
 	</div>
 </footer>

@@ -6,10 +6,12 @@ import Header from '../components/header.js'
 import Footer, { Policy } from '../components/footer.js'
 import 'bulma/css/bulma.min.css'
 import 'isomorphic-unfetch'
+import getConfig from 'next/config'
+
+const {  publicRuntimeConfig: config } = getConfig()
 
 //import { PageTransition } from 'next-page-transitions'
 //import '@fortawesome/fontawesome-free/js/all.min.js'
-
 
 export default withAuth(class extends React.Component {
 	constructor (props, context) {
@@ -59,6 +61,7 @@ export default withAuth(class extends React.Component {
 			{/* <PageTransition timeout={300} classNames="__next_flex-child page-transition"> */}
 			<Component
 				{ ...pageProps }
+				config={config}
 				exporting={exporting}
 				exported={exported}
 				isServer={isServer}

@@ -4,6 +4,8 @@ import Head from 'next/head'
 
 import Router from 'next/router'
 
+import Link from 'next/link'
+
 export default class extends React.Component {
 	constructor (props, context) {
 		super(props, context)
@@ -28,8 +30,6 @@ export default class extends React.Component {
 
 	render () {
 		let { message, exporting, exported } = this.props
-
-		// console.log('RENDER LOGIN', message)
 
 		return <form action="/login" method="POST" onSubmit={this.login} className="main-content">
 			<Head>
@@ -84,14 +84,18 @@ export default class extends React.Component {
 
 				<article className="message is-info">
 					<div className="message-body">
-						By proceeding you agree to our <a><strong>terms of service.</strong></a>.
+						By proceeding you agree to our <Link prefetch href='/tos'>
+							<a><strong>terms of service.</strong></a>
+						</Link>
 					</div>
 				</article>
 
 				<label className="label is-large">Register</label>
 				<article className="message">
 					<div className="message-body">
-						Lorem <strong>Pellentesque risus mi</strong>, . Nullam gravida <a>felis venenatis</a> efficitur. Aenean ac <em>stuff</em>.
+						<strong>Need an account?</strong>
+						<br/>
+						You can register in game by joining our <a href={this.props.config.APPLICATION_URL}>server</a>.
 					</div>
 				</article>
 			</div>
