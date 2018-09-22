@@ -20,7 +20,7 @@ if (process.env.SMTP_SERVER_ADDRESS) {
 		dkim: {
 			domainName: process.env.DOMAIN_ADDRESS,
 			keySelector: process.env.DKIM_SELECTOR,
-			privateKey: process.env.DKIM_KEY
+			privateKey: process.env.DKIM_KEY.replace(/\\n/g, '\n')
 		}
 });
 } else {
