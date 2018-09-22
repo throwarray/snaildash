@@ -89,35 +89,35 @@ local function CreatePeer ()
 end
 
 
-Citizen.CreateThread(CreatePeer)
+--[[ Citizen.CreateThread(CreatePeer)
 
--- local RegistrationErrors = {
--- 	[1] = 'Form failed validation.', -- Error: failed validation
--- 	[2] = 'Email is already in use.', -- Error: Email in use
--- 	[3] = 'Failed to save user.', -- Error: Failed to save user
--- 	[4] = 'License is registered already.', -- Error: Already registered
--- }
---
--- RegisterNetEvent('snaildash:Register')
--- AddEventHandler('snaildash:Register', function (err, isRegistered)
--- 	if err then
--- 		if err == 4 and isRegistered then
--- 			print('Account is created and verified')
--- 		else
--- 			print(RegistrationErrors[err] or RegistrationErrors[1])
--- 		end
--- 	else
--- 		print('Registered user successfully')
--- 	end
--- end)
---
--- TriggerServerEvent('snaildash:Register', 'Bob@gmail.com', '123456')
---
--- RegisterNetEvent('snaildash:Verify')
--- AddEventHandler('snaildash:Verify', function (err, isRegistered)
--- 	if err then
--- 		print(RegistrationErrors[err] or RegistrationErrors[1])
--- 	else
--- 		print('Verify user successfully')
--- 	end
--- end)
+local RegistrationErrors = {
+	[1] = 'Form failed validation.', -- Error: failed validation
+	[2] = 'Email is already in use.', -- Error: Email in use
+	[3] = 'Failed to save user.', -- Error: Failed to save user
+	[4] = 'License is registered already.', -- Error: Already registered
+}
+
+RegisterNetEvent('snaildash:Register')
+AddEventHandler('snaildash:Register', function (err, isRegistered)
+	if err then
+		if err == 4 and isRegistered then
+			print('Account is created and verified')
+		else
+			print(RegistrationErrors[err] or RegistrationErrors[1])
+		end
+	else
+		print('Registered user successfully')
+	end
+end)
+
+TriggerServerEvent('snaildash:Register', 'Bob@gmail.com', '123456')
+
+RegisterNetEvent('snaildash:Verify')
+AddEventHandler('snaildash:Verify', function (err, isRegistered)
+	if err then
+		print(RegistrationErrors[err] or RegistrationErrors[1])
+	else
+		print('Verify user successfully')
+	end
+end) ]]
