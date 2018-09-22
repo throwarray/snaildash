@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-const nodemailer = require('nodemailer')
+const nodemailer = require('mailgun')
 const flash = require('connect-flash')
 const passport = require('passport')
 const session = require('express-session')
@@ -8,13 +8,26 @@ const MongoStore = require('connect-mongo')(session)
 const cookieParser = require('cookie-parser')()
 const { Strategy } = require('passport-local')
 
-const transporter = nodemailer.createTransport({
-	service: 'gmail',
-	auth: {
-		user: process.env.EMAIL_ADDRESS,
-		pass: process.env.EMAIL_PASSWORD
-	}
-})
+if (process.env.SMTP_SERVER_ADDRESS) {
+	const transporter = nodemailer.createTransport({
+		host: process.env.SMTP_SERVER_ADDRESS,
+		port: process.env.SMTP_SERVER_PORT,
+		secure: true,
+		dkim: {
+			domainName: process.env.DOMAIN_ADDRESS,
+			keySelector: process.env.DKIM_SELECTOR,
+			privateKey: process.env.DKIM_KEY
+		}
+});
+} else {
+	const transporter = nodemailer.createTransport({
+		service: 'gmail',
+		auth: {
+			   user: process.env.EMAIL_ADDRESS,
+			   pass: process.env.EMAIL_PASSWORD
+		   }
+	   });
+}
 
 const Schema = mongoose.Schema
 
