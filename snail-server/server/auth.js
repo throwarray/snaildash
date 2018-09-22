@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-const nodemailer = require('mailgun')
+const nodemailer = require('nodemailer')
 const flash = require('connect-flash')
 const passport = require('passport')
 const session = require('express-session')
