@@ -14,6 +14,7 @@ WIP
 	MONGO_URL=mongodb://<username>:<password>@<address>/<db>
 	SESSION_SECRET=keyboard snail
 	APPLICATION_URL=http://localhost:3000
+	GAME_URL=fivem://connect/localhost:30120
 	EMAIL_ADDRESS=<email>@gmail.com
 	EMAIL_PASSWORD=<password>
 	```

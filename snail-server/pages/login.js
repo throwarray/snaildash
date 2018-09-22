@@ -95,7 +95,7 @@ export default class extends React.Component {
 					<div className="message-body">
 						<strong>Need an account?</strong>
 						<br/>
-						You can register in game by joining our <a href={this.props.config.APPLICATION_URL}>server</a>.
+						You can register in game by joining our <a href={ this.props.config.GAME_URL }>server</a>.
 					</div>
 				</article>
 			</div>
