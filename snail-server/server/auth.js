@@ -13,6 +13,10 @@ if (process.env.SMTP_SERVER_ADDRESS) {
 		host: process.env.SMTP_SERVER_ADDRESS,
 		port: process.env.SMTP_SERVER_PORT,
 		secure: true,
+		auth: {
+			user: process.env.EMAIL_ADDRESS,
+			pass: process.env.EMAIL_PASSWORD
+		},
 		dkim: {
 			domainName: process.env.DOMAIN_ADDRESS,
 			keySelector: process.env.DKIM_SELECTOR,
