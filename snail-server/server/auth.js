@@ -8,30 +8,26 @@ const MongoStore = require('connect-mongo')(session)
 const cookieParser = require('cookie-parser')()
 const { Strategy } = require('passport-local')
 
-if (process.env.SMTP_SERVER_ADDRESS) {
-	const transporter = nodemailer.createTransport({
-		host: process.env.SMTP_SERVER_ADDRESS,
-		port: process.env.SMTP_SERVER_PORT,
-		secure: true,
-		auth: {
-			user: process.env.EMAIL_ADDRESS,
-			pass: process.env.EMAIL_PASSWORD
-		},
-		dkim: {
-			domainName: process.env.DOMAIN_ADDRESS,
-			keySelector: process.env.DKIM_SELECTOR,
-			privateKey: process.env.DKIM_KEY.replace(/\\n/g, '\n')
-		}
-});
-} else {
-	const transporter = nodemailer.createTransport({
-		service: 'gmail',
-		auth: {
-			   user: process.env.EMAIL_ADDRESS,
-			   pass: process.env.EMAIL_PASSWORD
-		   }
-	   });
-}
+const transporter = process.env.SMTP_SERVER_ADDRESS? nodemailer.createTransport({
+	host: process.env.SMTP_SERVER_ADDRESS,
+	port: process.env.SMTP_SERVER_PORT,
+	secure: true,
+	auth: {
+		user: process.env.EMAIL_ADDRESS,
+		pass: process.env.EMAIL_PASSWORD
+	},
+	dkim: {
+		domainName: process.env.DOMAIN_ADDRESS,
+		keySelector: process.env.DKIM_SELECTOR,
+		privateKey: process.env.DKIM_KEY.replace(/\\n/g, '\n')
+	}
+}) : nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+		user: process.env.EMAIL_ADDRESS,
+		pass: process.env.EMAIL_PASSWORD
+	}
+})
 
 const Schema = mongoose.Schema
 
