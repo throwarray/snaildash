@@ -2,7 +2,21 @@ const passport = require('passport')
 const bodies = require('body-parser')
 const mongoose = require('mongoose')
 const router = require('express').Router()
-const PlayerRemotes = Object.create(null) // TODO Cleanup on Join | Disconnected
+const PlayerRemotes = Object.create(null)
+const NOOP = ()=> {}
+
+let GetPlayerLicense = NOOP
+let RegistrationReply = NOOP
+
+
+function makeid() {
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+	let text = ''
+	for (let i = 0; i < 50; i++)
+		text += chars.charAt(Math.floor(Math.random() * chars.length))
+
+	return text
+}
 
 router.use(bodies.urlencoded({ extended: true }))
 router.use(bodies.json())
@@ -13,33 +27,52 @@ router.use(bodies.json())
 // 	next()
 // })
 
-function GetPlayerLicense (source) {
-	let i = 0, ident
-	const len = global.GetNumPlayerIdentifiers(source)
-
-	for (; i < len; i++) {
-		ident = global.GetPlayerIdentifier(source, i)
-		if (ident && ident.startsWith('license')) return ident
-	}
-}
-
-function RegistrationReply (src, err, res) {
-	setImmediate(function () {
-		global.emitNet('snaildash:Register', src, err, res || false)
-	})
-}
-
-function makeid() {
-	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-	let text = ''
-	for (let i = 0; i < 50; i++)
-		text += possible.charAt(Math.floor(Math.random() * possible.length))
-
-	return text
-}
-
 if (global.RegisterNetEvent) {
-	// Sign up
+	const refreshPlayer = ()=> {
+		const src = global.source
+		const license = GetPlayerLicense(src)
+		if (license) delete PlayerRemotes[license]
+
+		return license
+	}
+
+	GetPlayerLicense = src => {
+		let i = 0, ident
+		const len = global.GetNumPlayerIdentifiers(src)
+
+		for (; i < len; i++) {
+			ident = global.GetPlayerIdentifier(src, i)
+			if (ident && ident.startsWith('license')) return ident
+		}
+	}
+
+	RegistrationReply = (src, err, res)=> {
+		setImmediate(function () {
+			global.emitNet('snaildash:Register', src, err, res || false)
+		})
+	}
+
+	// CFX-Client dropped
+	global.RegisterNetEvent('playerDropped')
+	global.onNet('playerDropped', refreshPlayer)
+
+
+	// CFX-Client ready
+	global.RegisterNetEvent('hardcap:playerActivated')
+	global.onNet('hardcap:playerActivated', function () {
+		const src = global.source
+		const license = refreshPlayer()
+
+		mongoose.model('User').findOne({ license }, function (err, user) {
+			setImmediate(function () {
+				global.emitNet('snaildash:Welcome', src, !!user,
+					!!(user && user.verified)
+				)
+			})
+		})
+	})
+
+	// CFX-Client signup
 	global.RegisterNetEvent('snaildash:Register')
 	global.onNet('snaildash:Register', function (email, password)
 	{
@@ -93,7 +126,7 @@ router.get('/user/verify', (req,res) => {
 			global.emitNet('snaildash:Verify', client.source, false, true)
 		})
 
-		console.log(`VERIFIED USER: ${ email }`)
+		// console.log(`VERIFIED USER: ${ email }`)
 	})
 })
 
