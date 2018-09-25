@@ -2,6 +2,8 @@ import Head from 'next/head'
 
 import React from 'react'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 const styles = {
 	marginTop: { marginTop: '1em' }
 }
@@ -33,7 +35,7 @@ const Page = ({ /* authenticated,*/ user }) => <div className="main-content">
 			<p className="control">
 				<a className="button is-large" href="https://github.com/throwarray/snaildash" target="_blank">
 					<span className="icon">
-						<i className="fab fa-github" aria-hidden="true"></i>
+						<FontAwesomeIcon icon={['fab', 'github']} size="2x"/>
 					</span>
 					<span>Github</span>
 				</a>
@@ -41,7 +43,7 @@ const Page = ({ /* authenticated,*/ user }) => <div className="main-content">
 			<p className="control">
 				<a className="button is-large is-primary" href="https://github.com/throwarray/snaildash/archive/master.zip" target="_blank">
 					<span className="icon">
-						<i className="fas fa-download" aria-hidden="true"></i>
+						<FontAwesomeIcon icon={['fas', 'download']} size="2x"/>
 					</span>
 					<span>Download</span>
 				</a>

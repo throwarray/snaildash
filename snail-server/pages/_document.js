@@ -16,11 +16,12 @@ export default class MyDocument extends Document {
 	render() {
 		return (
 			<html>
-				<Head>
+				<Head>{
+					this.props.isServer && !this.props.exporting &&
 					<link rel="stylesheet" href="/_next/static/style.css" />
+				}
 				</Head>
 				<body className="has-navbar-fixed-top">
-					<style jsx global>{'body { margin: 0; }'}</style>
 					<Main />
 					<NextScript />
 				</body>

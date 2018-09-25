@@ -4,7 +4,29 @@ import Link from './link.js'
 
 import Router from 'next/router'
 
-// import Head from 'next/head'
+import headerLogo from '../static/logo.png'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+
+const NavLink =  ({ children, ...props })=> {
+	const onClick = props.onClick
+
+	delete props.onClick
+
+	return <Link activeClassName="active" { ... props }>
+		<a className="navbar-item" onClick={ onClick }>
+			<style jsx>{`
+				.active {
+					text-decoration: underline;
+				}
+			`}</style>
+			{ children }
+		</a>
+	</Link>
+}
+
+
 class Header extends React.PureComponent {
 	constructor (props, ctx) {
 		super(props, ctx)
@@ -12,14 +34,6 @@ class Header extends React.PureComponent {
 		this.toggleMenu = this.toggleMenu.bind(this)
 		this.closeMenu = this.closeMenu.bind(this)
 		this.logout = this.logout.bind(this)
-
-		// const routerEvents = Router.router && Router.router.events
-		//this.onRouteChangeStart = this.onRouteChangeStart.bind(this)
-		// if (routerEvents)
-		// 	routerEvents.on('routeChangeStart', this.onRouteChangeStart)
-
-		// routeChangeComplete
-		// routeChangeError
 
 		this.state = {
 			menu_active: false
@@ -30,14 +44,6 @@ class Header extends React.PureComponent {
 			buttonColor: { color: 'white' }
 		}
 	}
-
-	// componentWillUnmount () {
-	// 	Router.router.events.off('routeChangeStart', this.onRouteChangeStart)
-	// }
-	//
-	// onRouteChangeStart (url) {
-	// 	console.log('App is changing to: ', url)
-	// }
 
 	closeMenu () { this.setState({ menu_active: false }) }
 
@@ -60,7 +66,7 @@ class Header extends React.PureComponent {
 			<div className="navbar-brand">
 				<Link scroll={false} prefetch href='/'>
 					<a className="navbar-item" onClick={this.toggleMenu}>
-						<img style={ this.styles.imgMargin } src="/static/logo.png" alt="" />
+						<img style={ this.styles.imgMargin } src={headerLogo} alt="" />
 						SNAIL DASH
 					</a>
 				</Link>
@@ -74,62 +80,39 @@ class Header extends React.PureComponent {
 				<div className="navbar-start">
 					{/* <a className="navbar-item">
 						<span className="icon">
-
 							<i className="fas fa-home"></i>
 						</span>
 					</a> */}
 				</div>
 				<div className="navbar-end">
-					<style jsx>{`
-						.active {
-							text-decoration: underline;
-						}
-					`}
-					</style>
-					<Link activeClassName="active" scroll={false} prefetch href='/'>
-						<a className="navbar-item" onClick={this.closeMenu}>
+					<NavLink onClick={this.closeMenu} prefetch href='/'>
 							Home
-						</a>
-					</Link>
-					<Link activeClassName="active" scroll={false} href='/admin'>
-						<a className="navbar-item" style={{ display: authenticated? 'flex' : 'flex' }} onClick={this.closeMenu}>
+					</NavLink>
+					<NavLink onClick={this.closeMenu} prefetch={authenticated} href='/admin'>
 							Dashboard
-						</a>
-					</Link>
-					<Link activeClassName="active" scroll={false} href='/stats'>
-						<a className="navbar-item" style={{ display: authenticated? 'flex' : 'flex' }} onClick={this.closeMenu}>
+					</NavLink>
+					<NavLink onClick={this.closeMenu} prefetch={authenticated} href='/stats'>
 							Stats
-						</a>
-					</Link>
+					</NavLink>
 					{
 						authenticated? <Link key="login" activeClassName="active" scroll={false} href='/logout'>
 							<a className="navbar-item" onClick={this.logout}>
 								Logout
 							</a>
-						</Link>: <Link key="login" activeClassName="active" scroll={false} prefetch href='/login'>
-							<a className="navbar-item" onClick={this.closeMenu}>
-								Login
-							</a>
-						</Link>
+						</Link>: <NavLink onClick={this.closeMenu} prefetch={!authenticated} href='/login'>
+							Login
+						</NavLink>
 					}
+
 					<div className="navbar-item">
 						<div className="field is-grouped is-hidden-touch">
 							<p className="control">
 								<a className="button is-small" href="https://github.com/throwarray/snaildash" target="_blank">
 									<span className="icon">
-										<i className="fab fa-github" aria-hidden="true"></i>
+										<FontAwesomeIcon icon={['fab', 'github']} size="lg"/>
 									</span>
-									<span>Github</span>
 								</a>
 							</p>
-							{/* <p className="control">
-								<a className="button is-small is-primary" href="https://github.com" target="_blank">
-									<span className="icon">
-										<i className="fas fa-download" aria-hidden="true"></i>
-									</span>
-									<span>Download</span>
-								</a>
-							</p> */}
 						</div>
 					</div>
 				</div>

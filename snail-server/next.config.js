@@ -1,8 +1,11 @@
-const withCSS = require('@zeit/next-css')
+const withSASS = require('@zeit/next-sass')
+const withImages = require('next-images')
+
+// const withCSS = require('@zeit/next-css')
 
 require('dotenv').config({ path: './server/.env' })
 
-module.exports = withCSS({
+module.exports = withSASS(withImages({
 	// distDir: '.next'
 	// cssModules: true
 	publicRuntimeConfig: {
@@ -10,4 +13,4 @@ module.exports = withCSS({
 		APPLICATION_URL: process.env.APPLICATION_URL,
 		GAME_URL: process.env.GAME_URL
 	}
-})
+}))

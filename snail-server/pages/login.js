@@ -6,6 +6,8 @@ import Router from 'next/router'
 
 import Link from 'next/link'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 export default class extends React.Component {
 	constructor (props, context) {
 		super(props, context)
@@ -41,7 +43,7 @@ export default class extends React.Component {
 					<p className="control has-icons-left has-icons-right">
 						<input name="username" ref={this.refEmail} className="input" type="email" placeholder="Email"/>
 						<span className="icon is-small is-left">
-							<i className="fas fa-envelope"></i>
+							<FontAwesomeIcon icon={['fas', 'envelope']} size="sm"/>
 						</span>
 						{/* <span className="icon is-small is-right">
 						<i className="fas fa-check"></i>
@@ -52,7 +54,7 @@ export default class extends React.Component {
 					<p className="control has-icons-left">
 						<input name="password" ref={this.refPassword} className="input" type="password" placeholder="Password"/>
 						<span className="icon is-small is-left">
-							<i className="fas fa-lock"></i>
+							<FontAwesomeIcon icon={['fas', 'lock']} size="sm"/>
 						</span>
 					</p>
 				</div>
