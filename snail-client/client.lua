@@ -96,6 +96,12 @@ local function CreatePeer ()
 	end)
 end
 
+local function DisplayHelpText(text)
+	AddTextEntry('MEOW_IM_A_KID', text)
+        BeginTextCommandDisplayHelp('MEOW_IM_A_KID')
+        EndTextCommandDisplayHelp(0,0,1,5000)
+end
+
 RegisterNetEvent('snaildash:Welcome')
 RegisterNetEvent('snaildash:Register')
 RegisterNetEvent('snaildash:Verify')
@@ -137,6 +143,11 @@ AddEventHandler('snaildash:Welcome', function (registered, verified)
 	onWelcome(registered, verified)
 end)
 
+RegisterCommand("snail-register", function()
+		SendNUIMessage({start=true})
+		SetNuiFocus(true, true)
+end, false)
+
 --------------------------------------------------------------------------------
 
 local isReady = false
@@ -144,12 +155,19 @@ local isReady = false
 function onWelcome (registered, verified)
 	if not registered and not verified then
 		-- TriggerServerEvent('snaildash:Register', 'bob@gmail.com', '123456')
+		CreateThread(function()
+			while not registered then
+				DisplayHelpText("Hi! looks like you still aren't registered on snaildash! let's fix that, type /snail-register in chat!")
+				Wait(120000)
+			end
+		end)
 	end
 end
 
 function IsRegistered (verified)
+	RegisterCommand("snail-register",function()end,true)
 	if not verified then
-
+		DisplayHelpText("You're just a step away from using your new snaildash account! Please check your email inbox and verify your account.")
 	end
 end
 
