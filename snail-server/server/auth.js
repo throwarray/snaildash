@@ -46,7 +46,8 @@ const UserSchema = Schema({
 	password: { type: String, required: true, minlength: 6, maxlength: 18 },
 	license: { type: String, required: true, unique: true },
 	token: { type: String, required: true },
-	verified: { type: Boolean, require: true, default: false }
+	verified: { type: Boolean, required: true, default: false },
+	isAdmin: { type: Boolean }
 })
 
 function UTF8Length (s) { return ~-encodeURI(s).split(/%..|./).length }

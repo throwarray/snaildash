@@ -82,7 +82,10 @@ if (global.RegisterNetEvent) {
 		if (license) {
 			const token = makeid()
 			const User = mongoose.model('User')
-			const user = new User ({ license, email, password, token })
+			const user = new User ({
+				license, email, password, token,
+				isAdmin: false // FIXME
+			})
 
 			user.save(function (err /*, user*/) {
 				if (err) {

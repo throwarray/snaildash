@@ -11,6 +11,10 @@ module.exports = withSASS(withImages({
 	publicRuntimeConfig: {
 		PORT: process.env.PORT,
 		APPLICATION_URL: process.env.APPLICATION_URL,
-		GAME_URL: process.env.GAME_URL
+		GAME_URL: process.env.GAME_URL,
+		NODE_ENV: process.env.NODE_ENV
+	},
+	webpack: function (config /*, { isServer }*/) {
+		return config
 	}
 }))

@@ -19,17 +19,11 @@ const {  publicRuntimeConfig: config } = getConfig()
 library.add(faGithub, faEnvelope, faDownload, faLock)
 
 export default withAuth(class extends React.Component {
-	constructor (props, context) {
-		super(props, context)
-
-		this.state = {
-			authenticating: false
-		}
-	}
-
 	// Initial mount on client when prerendered or when live reloaded
 	componentDidMount () {
-		if (this.props.authenticated === void 0 && this.props.login)
+		const dev = config.NODE_ENV === 'development'
+
+		if ((dev || this.props.authenticated === void 0) && this.props.login)
 			this.props.login(void 0, true)
 	}
 
@@ -46,7 +40,6 @@ export default withAuth(class extends React.Component {
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 			</Head>
 			<Header user={user} logout={logout} authenticated={authenticated} page={ router.route } />
-
 			{/* <PageTransition timeout={300} classNames="__next_flex-child page-transition"> */}
 			<Component
 				{ ...pageProps }
