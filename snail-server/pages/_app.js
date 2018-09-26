@@ -16,6 +16,8 @@ import Footer, { Policy } from '../components/footer.js'
 
 const {  publicRuntimeConfig: config } = getConfig()
 
+function NOOP () {}
+
 library.add(faGithub, faEnvelope, faDownload, faLock)
 
 export default withAuth(class extends React.Component {
@@ -24,7 +26,7 @@ export default withAuth(class extends React.Component {
 		const dev = config.NODE_ENV === 'development'
 
 		if ((dev || this.props.authenticated === void 0) && this.props.login)
-			this.props.login(void 0, true)
+			this.props.login(void 0, true).then(NOOP, NOOP)
 	}
 
 	render () {
@@ -38,6 +40,13 @@ export default withAuth(class extends React.Component {
 		return <Container>
 			<Head>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+				{/* <noscript>
+					<style>{`
+						.page-transition-enter {
+							opacity: initial;
+						}
+						`}</style>
+				</noscript> */}
 			</Head>
 			<Header user={user} logout={logout} authenticated={authenticated} page={ router.route } />
 			{/* <PageTransition timeout={300} classNames="__next_flex-child page-transition"> */}
@@ -57,14 +66,6 @@ export default withAuth(class extends React.Component {
 			{/* </PageTransition> */}
 			<Footer/>
 			<Policy/>
-
-			<noscript>
-				<style>{`
-					.page-transition-enter {
-						opacity: initial;
-					}
-					`}</style>
-			</noscript>
 		</Container>
 	}
 })
