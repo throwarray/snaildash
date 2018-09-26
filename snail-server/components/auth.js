@@ -103,29 +103,66 @@ export function withAuth (Component) {
 
 			this.logout = this.logout.bind(this)
 			this.login = this.login.bind(this)
+			this.onStorage = this.onStorage.bind(this)
+		}
+
+		defaultState () {
+			return {
+				authenticated: false,
+				message: void 0,
+				user: void 0,
+				date: Date.now()
+			}
 		}
 
 		async logout () {
-			const state = await logout()
+			const auth = await logout()
+			const state = Object.assign(this.defaultState(), auth)
 
-			this.setState(state || {})
+			localStorage.setItem('auth', JSON.stringify(state))
 
-			console.log('LOGGED OUT')
+			this.setState(state)
 
 			return true
 		}
 
 		async login (creds, withoutMessage) {
-			if (creds === void 0 && withoutMessage)
-				console.log('REFRESH LOGIN STATUS')
+			if (creds === void 0 && withoutMessage) console.log('FETCH LOGIN STATUS')
 
 			const auth = await login(creds, withoutMessage)
+			const state = Object.assign(this.defaultState(), auth)
 
-			this.setState(auth || {})
+			localStorage.setItem('auth', JSON.stringify(state))
+
+			this.setState(state)
 
 			if (auth.authenticated) console.log('LOGGED IN')
 
 			return !!(auth.authenticated)
+		}
+
+		onStorage (evt) {
+			if (evt.key === 'auth') {
+				const auth = JSON.parse(evt.newValue)
+				const state = Object.assign(this.defaultState(), auth)
+
+				if (state.authenticated != this.state.authenticated) // NOTE ==
+				{
+					console.log(
+						state.authenticated? 'LOGGED IN' : 'LOGGED OUT', 'FROM ANOTHER TAB'
+					)
+
+					this.setState(state)
+				}
+			}
+		}
+
+		componentDidMount () {
+			window.addEventListener('storage', this.onStorage)
+		}
+
+		componentWillUnmount () {
+			window.removeEventListener('storage', this.onStorage)
 		}
 
 		render () {

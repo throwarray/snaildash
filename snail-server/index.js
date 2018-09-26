@@ -22,6 +22,7 @@ if (dev) {
 const mongoose = require('mongoose')
 const express = require('express')
 const router = express()
+const compression = require('compression')
 const server = require('http').createServer(router)
 // const io = require('socket.io')(server, { serveClient: false })
 
@@ -44,8 +45,10 @@ router.use(require(safepath('./server/routes.js')))
 
 if (dev)
 	router.get('/*', function (req, res) { handle(req, res) })
-else
+else {
+	router.use(compression())
 	router.use(express.static(safepath('./out')))
+}
 
 Promise.resolve(dev? app.prepare() : true).then(() => {
 	return mongoose.connect(env.MONGO_URL, { useNewUrlParser: true })
