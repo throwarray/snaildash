@@ -86,13 +86,13 @@ class Header extends React.PureComponent {
 				</div>
 				<div className="navbar-end">
 					<NavLink onClick={this.closeMenu} prefetch href='/'>
-							Home
+						Home
+					</NavLink>
+					<NavLink onClick={this.closeMenu} prefetch={authenticated} href='/about'>
+						About
 					</NavLink>
 					<NavLink onClick={this.closeMenu} prefetch={authenticated} href='/admin'>
-							Dashboard
-					</NavLink>
-					<NavLink onClick={this.closeMenu} prefetch={authenticated} href='/stats'>
-							Stats
+						Dashboard
 					</NavLink>
 					{
 						authenticated? <Link key="login" activeClassName="active" scroll={false} href='/logout'>

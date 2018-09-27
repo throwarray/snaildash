@@ -14,6 +14,9 @@ module.exports = withSASS(withImages({
 		GAME_URL: process.env.GAME_URL,
 		NODE_ENV: process.env.NODE_ENV
 	},
+	sassLoaderOptions: {
+		outputStyle: 'compressed'
+	},
 	webpack: function (config /*, { isServer }*/) {
 		return config
 	}

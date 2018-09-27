@@ -1,5 +1,4 @@
 import React from 'react'
-import Head from 'next/head'
 import getConfig from 'next/config'
 import { Container } from 'next/app'
 
@@ -15,8 +14,7 @@ import Footer, { Policy } from '../components/footer.js'
 //import { PageTransition } from 'next-page-transitions'
 
 const {  publicRuntimeConfig: config } = getConfig()
-
-function NOOP () {}
+const NOOP = ()=> {}
 
 library.add(faGithub, faEnvelope, faDownload, faLock)
 
@@ -30,40 +28,25 @@ export default withAuth(class extends React.Component {
 	}
 
 	render () {
-		const {
-			Component, pageProps, router, login, logout, authenticated, user, message,
-			exporting, exported, isServer
-		} = this.props
+		const { Component, pageProps, ...props } = this.props
 
-		if (!isServer && !exporting) console.log('RENDER PAGE', router.route)
+		if (!props.isServer && !props.exporting)
+			console.log('RENDER PAGE', props.router.route)
 
 		return <Container>
-			<Head>
-				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
-				{/* <noscript>
-					<style>{`
-						.page-transition-enter {
-							opacity: initial;
-						}
-						`}</style>
-				</noscript> */}
-			</Head>
-			<Header user={user} logout={logout} authenticated={authenticated} page={ router.route } />
+			<Header
+				{ ...props }
+				page={ props.router.route }
+				config={ config } />
 			{/* <PageTransition timeout={300} classNames="__next_flex-child page-transition"> */}
 			<Component
+				{ ...props }
+				page={ props.router.route }
+				config={ config }
 				{ ...pageProps }
-				config={config}
-				exporting={exporting}
-				exported={exported}
-				isServer={isServer}
-				authenticated={authenticated}
-				message={message}
-				login={login}
-				logout={logout}
-				user={user}
 			/>
-
 			{/* </PageTransition> */}
+
 			<Footer/>
 			<Policy/>
 		</Container>
