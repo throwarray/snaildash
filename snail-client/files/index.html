@@ -3,28 +3,110 @@
 	<head>
 		<meta charset="utf-8">
 		<style>
-			#myform > * {
-				display: block;
-			}
+		* { box-sizing: border-box; }
 
+		body {
+			margin: 0;
+			display: none;
+			min-height: 100vh;
+			font-family: "Helvetica","Arial",sans-serif;
+		}
+
+		body.visible { display: initial; }
+
+		.form {
+			background: rgba(0,0,0,0.5);
+			color: #111;
+			padding: 1em;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+		}
+
+		.terms, input, button {
+			width: 250px;
+			display: block;
+			padding: 1em;
+			margin: 0em 0em 1em 0em;
+			font-family: Tahoma;
+			border-radius: 2px;
+		}
+
+		.form h1 {
+			color: white;
+			text-align:center;
+			margin: 0;
+			padding: 1em;
+			background: #222;
+			border-radius: 4px;
+		}
+
+		.terms > input { width: 1em; margin: 0; padding: 0; }
+
+		.form input {
+			background: #fff;
+
+			border-radius: 3px;
+		}
+
+		.terms { display: flex; background: #f5f5f5; }
+
+		.terms > div {
+		  flex: 1;
+			font-size: 0.75em;
+		}
+
+		.form-content {
+			background: ghostwhite;
+			padding: 1em 2em 2em 2em;
+		}
+
+		.form button {
+			background: #00d1b2;
+			color: #fff;
+			border: none;
+		}
+
+		.form button:active {
+			background: #00c4a7;
+		}
 		</style>
 	</head>
 	<body>
-		<form id="myform" action="index.html" method="post">
-			<input required type="email" name="email" value="" placeholder="Email"/>
-			<input required minlength="6" maxlength="18" type="password" name="password" placeholder="Password"/>
-			<input required minlength="6" maxlength="18" type="password" name="confirm" placeholder="Confirm password"/>
+		<form class="form" action="index.html" method="post">
 			<div>
-				Agree to terms of service <input required type="checkbox" name="agree"/>
+				<h1>Register</h1>
+				<div class="form-content">
+					<input required type="email" name="email" value="" placeholder="Email"/>
+					<input required minlength="6" maxlength="18" type="password" name="password" placeholder="Password"/>
+					<input required minlength="6" maxlength="18" type="password" name="confirm" placeholder="Confirm password"/>
+					<div class="terms">
+						<div>Agree to terms of service</div>
+						<input required type="checkbox" name="agree"/>
+					</div>
+					<button>OK</button>
+				</div>
 			</div>
-			<button>OK</button>
 		</form>
 		<script type="text/javascript">
-			const form = document.querySelector('#myform')
+			const form = document.querySelector('.form')
 			const agree = form.querySelector('[name="agree"]')
 			const pass = form.querySelector('[name="password"]')
 			const confirm = form.querySelector('[name="confirm"]')
 			const stripFields = [confirm, agree]
+			const dispatch = (actionName, payload, meta, error) => {
+				fetch(`http://${GetParentResourceName()}/onmessage`, {
+					"method": "POST",
+					"body": JSON.stringify({
+						type: actionName,
+						payload,
+						meta,
+						error
+					})
+				})
+			}
 
 			function passwordsMatch () {
 				if (pass.value !== confirm.value) {
@@ -36,30 +118,40 @@
 				}
 			}
 
+			function genFormData (data, child) {
+				if (stripFields.indexOf(child) === -1 && child.getAttribute('name'))
+					data[child.getAttribute('name')] = child.value
+
+				return data
+			}
+
 			confirm.addEventListener('input', passwordsMatch)
 
-			form.addEventListener('submit', function (evt) {
+			function onSubmit (evt) {
 				evt.preventDefault()
 
 				if (!form.checkValidity()) return
 
-				const data = Array.prototype.slice.call(form.querySelector('input'))
-					.reduce(function (data, child) {
-						if (stripFields.indexOf(child) === -1 && child.getAttribute('name'))
-							data[child.getAttribute('name')] = child.value
-
-						return data
-					}, {})
-
-				if (window.top !== window)
-				{
-					// Send data
-				}
+				if (window.top !== window) dispatch('register', {
+					email: form.querySelector('[name="email"]').value,
+					password: form.querySelector('[name="password"]').value
+				})
 
 				form.reset()
+			}
+
+			form.addEventListener('submit', onSubmit)
+
+			window.addEventListener('message', function (evt) {
+				const action = evt.data
+
+				// Show / hide the nui
+				if (action && action.type === 'show') {
+					const payload = action.payload || false
+					if (payload) document.body.classList.add('visible')
+					else document.body.classList.remove('visible')
+				}
 			})
-
-
 		</script>
 	</body>
 </html>
