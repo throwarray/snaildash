@@ -4,9 +4,10 @@ import Peer from 'simple-peer'
 import Error from 'next/error'
 import Router from 'next/router'
 import { isAuthenticated } from '../components/auth.js'
+import { Page } from '../components/page.js'
 
 
-export default class Page extends React.Component {
+export default class extends React.Component {
 	static async getInitialProps(context) {
 		if (context.req && context.req.headers && !isAuthenticated(context.req))
 			context.req.res.redirect('/login')
@@ -131,7 +132,7 @@ export default class Page extends React.Component {
 			showButton = true
 		}
 
-		return <div className='main-content'>
+		return <Page title="Admin">
 			{ status }
 			{ this.state.stats ?
 				<div>Health: { this.state.stats.health }</div>: null
@@ -139,6 +140,6 @@ export default class Page extends React.Component {
 			{ showButton?
 				<button onClick={this.pair}>PAIR</button> : null
 			}
-		</div>
+		</Page>
 	}
 }

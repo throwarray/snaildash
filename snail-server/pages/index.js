@@ -1,19 +1,12 @@
-import Head from 'next/head'
-
 import React from 'react'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Page, Icon } from '../components/page.js'
 
 const styles = {
 	marginTop: { marginTop: '1em' }
 }
 
-
-const Page = ({ /* authenticated,*/ user }) => <div className="main-content">
-	<Head>
-		<title key="title">Welcome to Homepage</title>
-	</Head>
-
+export default ({ /* authenticated,*/ user }) => <Page title="Home">
 	<section className="hero is-bold is-dark">
 		<div className="hero-body">
 			<div className="container">
@@ -35,7 +28,7 @@ const Page = ({ /* authenticated,*/ user }) => <div className="main-content">
 			<p className="control">
 				<a className="button is-large" href="https://github.com/throwarray/snaildash" target="_blank">
 					<span className="icon">
-						<FontAwesomeIcon icon={['fab', 'github']} size="2x"/>
+						<Icon icon={['fab', 'github']} size="2x"/>
 					</span>
 					<span>Github</span>
 				</a>
@@ -43,7 +36,7 @@ const Page = ({ /* authenticated,*/ user }) => <div className="main-content">
 			<p className="control">
 				<a className="button is-large is-primary" href="https://github.com/throwarray/snaildash/archive/master.zip" target="_blank">
 					<span className="icon">
-						<FontAwesomeIcon icon={['fas', 'download']} size="2x"/>
+						<Icon icon={['fas', 'download']} size="2x"/>
 					</span>
 					<span>Download</span>
 				</a>
@@ -51,6 +44,4 @@ const Page = ({ /* authenticated,*/ user }) => <div className="main-content">
 		</div>
 
 	</div>
-</div>
-
-export default Page
+</Page>
