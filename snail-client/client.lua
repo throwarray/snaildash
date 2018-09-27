@@ -149,7 +149,7 @@ local isReady = false
 
 function focusNUI (show)
 	nuiOpen = show == true
-	SetNuiFocus(true, true)
+	SetNuiFocus(nuiOpen, nuiOpen)
 	SendNUIMessage({ type = 'show', payload = nuiOpen })
 end
 
