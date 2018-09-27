@@ -96,6 +96,12 @@ local function CreatePeer ()
 	end)
 end
 
+local function DisplayHelpText(text)
+	AddTextEntry('MEOW_IM_A_KID', text)
+	BeginTextCommandDisplayHelp('MEOW_IM_A_KID')
+	EndTextCommandDisplayHelp(0,0,1,5000)
+end
+
 RegisterNetEvent('snaildash:Welcome')
 RegisterNetEvent('snaildash:Register')
 RegisterNetEvent('snaildash:Verify')
@@ -137,19 +143,47 @@ AddEventHandler('snaildash:Welcome', function (registered, verified)
 	onWelcome(registered, verified)
 end)
 
---------------------------------------------------------------------------------
 
+local nuiOpen = false
 local isReady = false
+
+function focusNUI (show)
+	nuiOpen = show == true
+	SetNuiFocus(nuiOpen, nuiOpen)
+	SendNUIMessage({ type = 'show', payload = nuiOpen })
+end
+
+RegisterCommand("snail-register", function()
+	if not isReady and not nuiOpen then
+		focusNUI(true)
+	end
+end, false)
+
+RegisterNUICallback('onmessage', function (action)
+	if action and action.type == 'register' then
+		local payload = action.payload
+
+		TriggerServerEvent('snaildash:Register', payload.email, payload.password)
+		focusNUI(false)
+	end
+end)
+
+--------------------------------------------------------------------------------
 
 function onWelcome (registered, verified)
 	if not registered and not verified then
-		-- TriggerServerEvent('snaildash:Register', 'bob@gmail.com', '123456')
+		CreateThread(function()
+			while not registered do
+				DisplayHelpText("Hi! looks like you still aren't registered on snaildash! let's fix that, type /snail-register in chat!")
+				Wait(60000)
+			end
+		end)
 	end
 end
 
 function IsRegistered (verified)
 	if not verified then
-
+		DisplayHelpText("You're just a step away from using your new snaildash account! Please check your email inbox and verify your account.")
 	end
 end
 
