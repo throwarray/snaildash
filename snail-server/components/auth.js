@@ -69,12 +69,11 @@ async function logout () {
 export function withAuth (Component) {
 	return class extends App {
 		static async getInitialProps ({ Component: Comp, /* router, */ ctx }) {
-			const isServer = !!ctx.req
+			const isServer = !!ctx.req && typeof window === 'undefined'
 			const exporting = !!(isServer && !ctx.req.headers)
 			const pageProps = Comp.getInitialProps?
 				await Comp.getInitialProps(ctx) : {}
-
-			return isServer && !exporting? {
+			const props = isServer && !exporting? {
 				message: isServer && ctx.req.flash? ctx.req.flash('message') : void 0,
 				user: ctx.req.user,
 				authenticated: isAuthenticated(ctx.req),
@@ -86,19 +85,23 @@ export function withAuth (Component) {
 				exporting,
 				isServer: false
 			}
+
+			return props
 		}
 
 		constructor (props, context) {
 			super(props, context)
 
-			const exported = props.exporting === void 0
+			const noWindow = typeof window === 'undefined'
+			const exporting = props.exporting && noWindow
 
 			this.state = {
 				message: props.message,
 				user: props.user,
 				authenticated: props.authenticated,
-				exporting: !!(props.exporting),
-				exported
+				isServer: props.isServer && noWindow,
+				exporting,
+				exported: !exporting && props.authenticated === void 0
 			}
 
 			this.logout = this.logout.bind(this)
@@ -134,7 +137,8 @@ export function withAuth (Component) {
 
 			localStorage.setItem('auth', JSON.stringify(state))
 
-			this.setState(state)
+			if (withoutMessage && !auth.authenticated) return false
+			else this.setState(state)
 
 			if (auth.authenticated) console.log('LOGGED IN')
 

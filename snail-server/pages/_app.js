@@ -13,10 +13,11 @@ import { withAuth } from '../components/auth.js'
 import Header from '../components/header.js'
 import Footer, { Policy } from '../components/footer.js'
 
-
 const {  publicRuntimeConfig: config } = getConfig()
 const NOOP = ()=> {}
-const TransitionSub = (props) => <div className="next-page-transitions">{props.children}</div>
+const TransitionSub = (props) => <div className="next-page-transitions">
+	{props.children}
+</div>
 
 library.add(faGithub, faEnvelope, faDownload, faLock)
 export default withAuth(class extends React.Component {
@@ -30,7 +31,10 @@ export default withAuth(class extends React.Component {
 
 	render () {
 		const { Component, pageProps, ...props } = this.props
-		const Transition = props.isServer? TransitionSub : PageTransition
+		const Transition = !this.props.isServer && !this.props.exporting &&
+			this.rendered ? PageTransition : TransitionSub
+
+		this.rendered = true
 
 		if (!props.isServer && !props.exporting)
 			console.log('RENDER PAGE', props.router.route)
@@ -46,6 +50,7 @@ export default withAuth(class extends React.Component {
 					page={ props.router.route }
 					config={ config }
 					{ ...pageProps }
+					key={ this.props.router.route }
 				/>
 			</Transition>
 			<Footer/>
