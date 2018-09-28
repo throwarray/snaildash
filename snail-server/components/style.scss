@@ -12,27 +12,27 @@ body {
 	min-height: 100vh;
 }
 
-.__next_flex-child {
+.next-page-transitions {
 	min-height: inherit;
 }
 
-// .page-transition-enter {
-// 	opacity: 0;
-// }
-//
-// .page-transition-enter-active {
-// 	opacity: 1;
-// 	transition: opacity 300ms;
-// }
-//
-// .page-transition-exit {
-// 	opacity: 1;
-// }
-//
-// .page-transition-exit-active {
-// 	opacity: 0;
-// 	transition: opacity 300ms;
-// }
+.page-transition-enter {
+	opacity: 0;
+}
+
+.page-transition-enter-active {
+	opacity: 1;
+	transition: opacity 300ms;
+}
+
+.page-transition-exit {
+	opacity: 1;
+}
+
+.page-transition-exit-active {
+	opacity: 0;
+	transition: opacity 300ms;
+}
 
 .button.is-large svg {
 	max-width: 24px;

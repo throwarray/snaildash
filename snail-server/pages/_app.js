@@ -7,17 +7,18 @@ import '../components/style.scss'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faDownload, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons'
+import { PageTransition } from 'next-page-transitions'
 
 import { withAuth } from '../components/auth.js'
 import Header from '../components/header.js'
 import Footer, { Policy } from '../components/footer.js'
-//import { PageTransition } from 'next-page-transitions'
+
 
 const {  publicRuntimeConfig: config } = getConfig()
 const NOOP = ()=> {}
+const TransitionSub = (props) => <div className="next-page-transitions">{props.children}</div>
 
 library.add(faGithub, faEnvelope, faDownload, faLock)
-
 export default withAuth(class extends React.Component {
 	// Initial mount on client when prerendered or when live reloaded
 	componentDidMount () {
@@ -29,6 +30,7 @@ export default withAuth(class extends React.Component {
 
 	render () {
 		const { Component, pageProps, ...props } = this.props
+		const Transition = props.isServer? TransitionSub : PageTransition
 
 		if (!props.isServer && !props.exporting)
 			console.log('RENDER PAGE', props.router.route)
@@ -38,15 +40,14 @@ export default withAuth(class extends React.Component {
 				{ ...props }
 				page={ props.router.route }
 				config={ config } />
-			{/* <PageTransition timeout={300} classNames="__next_flex-child page-transition"> */}
-			<Component
-				{ ...props }
-				page={ props.router.route }
-				config={ config }
-				{ ...pageProps }
-			/>
-			{/* </PageTransition> */}
-
+			<Transition timeout={500} classNames="next-page-transitions page-transition">
+				<Component
+					{ ...props }
+					page={ props.router.route }
+					config={ config }
+					{ ...pageProps }
+				/>
+			</Transition>
 			<Footer/>
 			<Policy/>
 		</Container>
