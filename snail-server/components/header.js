@@ -8,6 +8,7 @@ import headerLogo from '../static/logo.png'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+import { logout } from './auth.js'
 
 const NavLink =  ({ children, ...props })=> {
 	const onClick = props.onClick
@@ -53,7 +54,9 @@ class Header extends React.PureComponent {
 		e.preventDefault()
 
 		this.closeMenu()
-		this.props.logout().then(()=> {
+
+		logout().then(()=>{
+			this.props.setSession({})
 			Router.push({ pathname: '/', query: {} })
 		}, ()=> {})
 	}

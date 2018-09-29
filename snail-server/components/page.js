@@ -6,9 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const defaultStyles = { flex: '1' }
 
-const Page = (props)=> {
-	// const { router, login, logout, authenticated, user, message, exporting, exported, isServer, config } = props
-
+const Page = props => {
 	return <React.Fragment>
 		<Head>
 			{ props.title && <title key="title">{props.title}</title> }

@@ -6,30 +6,65 @@ import Link from 'next/link'
 
 import { Page, Icon } from '../components/page.js'
 
+import { login, isAuthenticated } from '../components/auth.js'
+
 export default class extends React.Component {
+	static getInitialProps (ctx) {
+		const isServer = ctx.req && ctx.req.headers
+
+		if (isAuthenticated(ctx.req)) {
+			ctx.res.redirect('/')
+
+			return {}
+		}
+
+		return {
+			isServer,
+			message: isServer && ctx.req.flash? ctx.req.flash('message') : void 0
+		}
+	}
+
 	constructor (props, context) {
 		super(props, context)
 
 		this.refPassword = React.createRef()
 		this.refEmail = React.createRef()
 		this.login = this.login.bind(this)
+		this.state = {}
+
+		if (props.authenticated && !props.isServer) {
+			Router.push({ pathname: '/', query: {} })
+		}
+	}
+
+	componentWillUnmount () {
+		this.unmounting = true
 	}
 
 	login (e) {
 		e.preventDefault()
 		e.stopPropagation()
-		this.props.login({
-			username: this.refEmail.current.value,
-			password: this.refPassword.current.value
-		}).then(function (loggedIn) {
-			if (loggedIn) {
-				Router.push({ pathname: '/', query: {} })
-			}
-		}, function () {})
+
+		if (!this.unmounting)
+			login({
+				username: this.refEmail.current.value,
+				password: this.refPassword.current.value
+			}).then(session => {
+				if (session.authenticated) {
+					this.props.setSession({
+						user: session.user,
+						authenticated: !!session.authenticated
+					})
+
+					Router.push({ pathname: '/', query: {} })
+				} else if (!this.unmounting) this.setState({
+					message: session.message
+				})
+			}, (/*err*/) => { /* throw err */ })
 	}
 
 	render () {
-		let { message, exporting, exported } = this.props
+		const message = this.props.message || this.state.message
 
 		return <Page title="Login">
 			<form action="/login" method="POST" onSubmit={this.login}>
@@ -64,20 +99,19 @@ export default class extends React.Component {
 					</div>
 
 					<article className="message is-danger">
-						<div className="message-body" style={{ display: (this.props.message && this.props.message.length) || (message && message.length) ? 'initial' : 'none' }}>
-							{ (this.props.message && this.props.message[0]) || message && message[0] }
+						<div className="message-body" style={{ display: (message && message.length) || (message && message.length) ? 'initial' : 'none' }}>
+							{ (message && message[0]) || message && message[0] }
 						</div>
 					</article>
 
 					<div>
-						{ exporting || exported ? <noscript>
+						<noscript>
 							<article className="message is-danger">
 								<div className="message-body">
 							This site requires <strong>JavaScript</strong>. Please enable it to continue.
 								</div>
 							</article>
-						</noscript> : <div></div>
-						}
+						</noscript>
 					</div>
 
 					<article className="message is-info">
