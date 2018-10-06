@@ -1,13 +1,53 @@
 const passport = require('passport')
 const bodies = require('body-parser')
 const mongoose = require('mongoose')
-const router = require('express').Router()
+const { Router } = require('express')
+const { parse, format } = require('url')
+const router = Router()
+
 const PlayerRemotes = Object.create(null)
 const NOOP = ()=> {}
 
 let GetPlayerLicense = NOOP
 let RegistrationReply = NOOP
 
+// Redirect middleware
+const isRedirect = (req, redirect) => {
+	if (!redirect || !redirect.path) return false
+
+	const host = req.hostname
+	const xhost = redirect.hostname
+
+	if (xhost !== null && xhost !== host) return false
+
+	return true
+}
+
+const redirectRequest = (req, fallback = '/') => {
+	const res = req.res
+	const query = req.query || {}
+	const redirect = parse(query.redirect || fallback, true)
+
+	if (isRedirect(req, redirect)) res.redirect(redirect.path)
+	else res.redirect(fallback)
+}
+
+function RedirectNonAuthn (req, res, next) {
+	if (!req.isAuthenticated()) res.redirect('/login?redirect=%2Fadmin')
+	else next()
+}
+
+function RedirectAuthn (req, res, next) {
+	if (req.isAuthenticated()) redirectRequest(req)
+	else next()
+}
+
+function Session_RedirectNoScript (req, res) {
+	const xhr = (req.body && req.body.xhr) || req.query && req.query.xhr
+
+	if (xhr) res.redirect('/session')
+	else redirectRequest(req)
+}
 
 function makeid() {
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -116,12 +156,10 @@ router.get('/user/verify', (req,res) => {
 	}, (err, result) => {
 
 		if (typeof result === void 0 || err) {
-			req.flash('message', 'Invalid verification.')
-
-			return res.redirect('/login')
+			return res.redirect('/login?message=Invalid%20verification')
 		}
 
-		res.redirect('/login')
+		res.redirect('/login?message=Account&verified')
 
 		const client = PlayerRemotes[result.license]
 
@@ -133,69 +171,52 @@ router.get('/user/verify', (req,res) => {
 	})
 })
 
-router.all('/logout', (req, res) => {
-	const xhr = !!(req.body && req.body.xhr)
+// Guard admin page
+router.get('/admin', RedirectNonAuthn)
 
+// Fetch session state
+router.all('/session', function (req, res) {
+	if (!req.isAuthenticated()) res.json({ session: null })
+	else res.json({ session: { user: req.user } })
+})
+
+// Add logout route
+router.all('/logout', function (req, res, next) {
 	req.logout()
+	next()
+}, Session_RedirectNoScript)
 
-	if (!xhr) res.redirect('/')
-	else res.json({ authenticated: false })
-})
 
-// TODO Clean this up
+// Guard login page
+router.get('/login', RedirectAuthn)
+
 router.post('/login', function (req, res, next) {
-	const xhr = !!(req.body && req.body.xhr)
+	if (!req.isAuthenticated()) {
+		const xhr = req.body.xhr
+		const reject = (message = 'Invalid username or password')=> {
+			if (xhr) res.json({ session: null, message })
+			else {
+				const dest = /* req._parsedUrl || */ parse(req.url, true)
 
-	// request is authenticated already
-	if (xhr && req.isAuthenticated()) {
-		res.json({ user: req.user.toJSON(), authenticated: true })
-		return
+				dest.query.message = message
+				dest.search = null
+
+				res.redirect(format(dest))
+			}
+		}
+
+		passport.authenticate('local', function(err, user /*, info */) {
+			if (err || !user) reject()
+			else req.logIn(user, function (err) {
+				if (!err) next()
+				else reject()
+			})
+		})(req, res, next)
 	}
+	else next()
+}, Session_RedirectNoScript)
 
-	passport.authenticate('local', function(err, user /*, info */) {
-		const message = 'Invalid potatoes or password.'
 
-		if (err) {
-			if (xhr) return res.json({
-				message: err.message,
-				authenticated: false
-			})
-			else return next(err)
-		}
-
-		if (!user) {
-			if (!xhr) {
-				req.flash('message', message)
-
-				return res.redirect('/login')
-			}
-
-			return res.json({
-				message,
-				authenticated: false
-			})
-		}
-
-		req.logIn(user, function(err) {
-			req.flash('message') // clear
-
-			if (err) {
-				if (xhr) return res.json({
-					message: err.message,
-					authenticated: false
-				})
-				else return next(err)
-			}
-
-			if (xhr) return res.json({
-				user: req.user.toJSON(),
-				authenticated: true
-			})
-
-			return res.redirect('/')
-		})
-	})(req, res, next)
-})
 
 ////////////////////////////////////////////////////////////////////////////////
 // PAIR WRTC CLIENTS

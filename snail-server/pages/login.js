@@ -1,73 +1,60 @@
 import React from 'react'
 
-import Router from 'next/router'
-
 import Link from 'next/link'
 
-import { Page, Icon } from '../components/page.js'
+import Page, { Icon } from '../components/page.js'
 
-import { login, isAuthenticated } from '../components/auth.js'
+import { withoutAuth } from '../components/session.js'
 
-export default class extends React.Component {
-	static getInitialProps (ctx) {
-		const isServer = ctx.req && ctx.req.headers
-
-		if (isAuthenticated(ctx.req)) {
-			ctx.res.redirect('/')
-
-			return {}
-		}
-
-		return {
-			isServer,
-			message: isServer && ctx.req.flash? ctx.req.flash('message') : void 0
-		}
-	}
+export default withoutAuth(class extends React.Component {
+	// static async getInitialProps (ctx) {
+	// 	if (!ctx.req)
+	// 		await new Promise(function (resolve) {
+	// 			setTimeout(function () { resolve() }, 3000)
+	// 		})
+	//
+	// 	return {}
+	// }
 
 	constructor (props, context) {
-		super(props, context)
+		super (props, context)
 
 		this.refPassword = React.createRef()
 		this.refEmail = React.createRef()
-		this.login = this.login.bind(this)
-		this.state = {}
 
-		if (props.authenticated && !props.isServer) {
-			Router.push({ pathname: '/', query: {} })
+		this.state = {
+			asPath: props.router.asPath,
+			message: props.message || props.router.query.message
 		}
+
+		this.handleSubmit = this.handleSubmit.bind(this)
+
+		//if (!props.isServer && !props.exporting)
+		//props.router.replace(props.router, props.router.route, { shallow: true })
 	}
 
-	componentWillUnmount () {
-		this.unmounting = true
-	}
+	// Submit the form data
+	handleSubmit (evt) {
+		evt.preventDefault()
 
-	login (e) {
-		e.preventDefault()
-		e.stopPropagation()
-
-		if (!this.unmounting)
-			login({
-				username: this.refEmail.current.value,
-				password: this.refPassword.current.value
-			}).then(session => {
-				if (session.authenticated) {
-					this.props.setSession({
-						user: session.user,
-						authenticated: !!session.authenticated
-					})
-
-					Router.push({ pathname: '/', query: {} })
-				} else if (!this.unmounting) this.setState({
-					message: session.message
+		this.props.login({
+			email: this.refEmail.current.value,
+			password: this.refPassword.current.value
+		}).then(({ session, message }) => {
+			if (session) console.log('Logged in successfully')
+			else {
+				this.setState({
+					message: message || 'Invalid email or password'
 				})
-			}, (/*err*/) => { /* throw err */ })
+			}
+		}, err => { throw err })
 	}
 
 	render () {
-		const message = this.props.message || this.state.message
+		const message = this.state.message
 
 		return <Page title="Login">
-			<form action="/login" method="POST" onSubmit={this.login}>
+			<form action="" method="POST" onSubmit={this.handleSubmit}>
 				<div className="container" style={{ padding: '1em', 'maxWidth':  '800px' }}>
 					<div className="field">
 						<label className="label is-large">Login</label>
@@ -77,8 +64,8 @@ export default class extends React.Component {
 								<Icon icon={['fas', 'envelope']} size="sm"/>
 							</span>
 							{/* <span className="icon is-small is-right">
-						<i className="fas fa-check"></i>
-					</span> */}
+							<i className="fas fa-check"></i>
+						</span> */}
 						</p>
 					</div>
 					<div className="field">
@@ -93,7 +80,7 @@ export default class extends React.Component {
 					<div className="field">
 						<p className="control">
 							<button className="button is-success" style={{width:'100%'}}>
-						Login
+							Login
 							</button>
 						</p>
 					</div>
@@ -108,7 +95,7 @@ export default class extends React.Component {
 						<noscript>
 							<article className="message is-danger">
 								<div className="message-body">
-							This site requires <strong>JavaScript</strong>. Please enable it to continue.
+								This site requires <strong>JavaScript</strong>. Please enable it to continue.
 								</div>
 							</article>
 						</noscript>
@@ -116,7 +103,7 @@ export default class extends React.Component {
 
 					<article className="message is-info">
 						<div className="message-body">
-				By proceeding you agree to our <Link prefetch href='/tos'>
+					By proceeding you agree to our <Link prefetch href='/tos'>
 								<a><strong>terms of service.</strong></a>
 							</Link>
 						</div>
@@ -127,11 +114,14 @@ export default class extends React.Component {
 						<div className="message-body">
 							<strong>Need an account?</strong>
 							<br/>
-			You can register in game by joining our <a href={ this.props.config.GAME_URL }>server</a>.
+				You can register in game by joining our <a href={ this.props.config.GAME_URL }>server</a>.
 						</div>
 					</article>
 				</div>
 			</form>
 		</Page>
 	}
-}
+}, {
+	redirect: true,
+	fallback: '/'
+})
