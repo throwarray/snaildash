@@ -22,7 +22,7 @@ export async function logout () {
 	const res = await fetch('/logout', {
 		headers: {
 			'Accept': 'application/json',
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/x-www-form-urlencoded'
 		},
 		body: JSON.stringify({ xhr: true }),
 		method: 'POST'
@@ -37,7 +37,7 @@ export async function login (creds) {
 	const res = await fetch('/login', {
 		headers: {
 			'Accept': 'application/json',
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/x-www-form-urlencoded'
 		},
 		body: JSON.stringify({ ...creds, xhr: true }),
 		method: 'POST'
