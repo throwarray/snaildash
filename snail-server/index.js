@@ -1,29 +1,21 @@
-const path = require('path')
-const resourcePath = global.GetResourcePath ?
-	global.GetResourcePath(global.GetCurrentResourceName()): __dirname
+require(require.resolve('./server/compat.js'))
 
-const safepath = url => path.join(resourcePath, url)
 const env = process.env
 const port = parseInt(env.PORT, 10) || 3000
 const dev = env.NODE_ENV == 'development'
 
-let next
-let app
-let handle
-
-if (dev) {
-	next = require('next')
-	app = next({ dev })
-	handle = app.getRequestHandler()
-} else require('dotenv').config({
-	path: safepath('./server/.env')
-})
+if (!dev) require('dotenv').config({ path: './server/.env' })
 
 const mongoose = require('mongoose')
 const express = require('express')
 const router = express()
 const compression = require('compression')
 const server = require('http').createServer(router)
+
+const next = require('next')
+const app = next({ dev })
+const handle = app.getRequestHandler()
+
 // const io = require('socket.io')(server, { serveClient: false })
 
 const cfg = {
@@ -31,26 +23,26 @@ const cfg = {
 	app,
 	server,
 	router,
-	resourcePath,
+	resourcePath: __dirname,
 	env: env.NODE_ENV
 }
 
 if (!process.env.MONGO_URL) throw new Error('MISSING ENV VARIABLE [MONGO_URL]')
 
-require(safepath('./server/auth.js'))(cfg)
+require('./server/auth.js')(cfg)
 
-//require(safepath('./server/io.js'))(cfg)
+// require('./server/io.js')(cfg)
 
-router.use(require(safepath('./server/routes.js')))
+router.use(require('./server/routes.js'))
 
-if (dev)
-	router.get('/*', function (req, res) { handle(req, res) })
-else {
+if (!dev) {
 	router.use(compression())
-	router.use(express.static(safepath('./out')))
+	router.use(express.static('./out'))
 }
 
-Promise.resolve(dev? app.prepare() : true).then(() => {
+router.get('/*', function (req, res) { handle(req, res) })
+
+Promise.resolve(app.prepare()).then(() => {
 	return mongoose.connect(env.MONGO_URL, { useNewUrlParser: true })
 }, err => {
 	throw err
