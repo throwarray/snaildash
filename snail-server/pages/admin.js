@@ -6,7 +6,7 @@ import Error from 'next/error'
 
 import { Page } from '../components/page.js'
 
-import { withAuth } from '../components/session.js'
+import { withAuth, formBody } from '../components/session.js'
 
 export default withAuth(class extends React.Component {
 	constructor (props, context) {
@@ -35,7 +35,7 @@ export default withAuth(class extends React.Component {
 					'Accept': 'application/json',
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				body: JSON.stringify({ uri: data })
+				body: formBody({ uri: data })
 			})
 		})
 
@@ -109,7 +109,7 @@ export default withAuth(class extends React.Component {
 
 	render () {
 		let status, showButton
-	
+
 		if (this.props.session === void 0) status = <div>
 			<noscript>
 				<article className="message is-danger">

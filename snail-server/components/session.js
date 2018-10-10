@@ -2,6 +2,21 @@ import React from 'react'
 import Router, { withRouter } from 'next/router'
 import Error from 'next/error'
 import { parse } from 'url'
+import fetch from 'isomorphic-unfetch'
+
+export function formBody (obj) {
+	return Object.keys(obj).map(function (key) {
+		const val = obj[key]
+		const k = global.encodeURIComponent(key)
+
+		if (val === void 0)
+			return k === void 0 ? '' : k
+		else
+		{
+			return `${k}=${global.encodeURIComponent(val)}`
+		}
+	}).join('&')
+}
 
 export async function fetchSession () {
 	const res = await fetch('/session', {
@@ -9,7 +24,7 @@ export async function fetchSession () {
 			'Accept': 'application/json',
 			'Content-Type': 'application/x-www-form-urlencoded'
 		},
-		body: JSON.stringify({ xhr: true }),
+		body: formBody({ xhr: true }),
 		method: 'POST'
 	})
 
@@ -24,7 +39,7 @@ export async function logout () {
 			'Accept': 'application/json',
 			'Content-Type': 'application/x-www-form-urlencoded'
 		},
-		body: JSON.stringify({ xhr: true }),
+		body: formBody({ xhr: true }),
 		method: 'POST'
 	})
 
@@ -39,7 +54,7 @@ export async function login (creds) {
 			'Accept': 'application/json',
 			'Content-Type': 'application/x-www-form-urlencoded'
 		},
-		body: JSON.stringify({ ...creds, xhr: true }),
+		body: formBody({ ...creds, xhr: true }),
 		method: 'POST'
 	})
 
