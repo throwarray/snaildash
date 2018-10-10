@@ -7,7 +7,7 @@ export async function fetchSession () {
 	const res = await fetch('/session', {
 		headers: {
 			'Accept': 'application/json',
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/x-www-form-urlencoded'
 		},
 		body: JSON.stringify({ xhr: true }),
 		method: 'POST'
