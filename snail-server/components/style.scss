@@ -6,17 +6,13 @@ body {
 	margin: 0;
 }
 
-.main-content {
-	flex: 1;
-}
-
 #__next {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
 }
 
-.__next_flex-child {
+.next-page-transitions {
 	min-height: inherit;
 }
 

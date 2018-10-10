@@ -60,33 +60,37 @@ UserSchema.pre('save', function (next) {
 
 	if (UTF8Length(user.password) > 18) return next(true)
 
-	const href = process.env.APPLICATION_URL + '/user/verify/?token=' +
-		user.token + '&email=' + user.email
+	bcrypt.hash(user.password, saltRounds, function (err, hash) {
+		if (err) return next(err)
+		user.password = hash
+
+		next()
+	})
+})
+
+UserSchema.post('save', function (user, next) {
+	const href = process.env.APPLICATION_URL +
+		'/user/verify/?token=' + user.token + '&email=' + user.email
 
 	const mailOptions = {
-		from: process.env.EMAIL_ADDRESS, // sender address
-		to: user.email, // list of receivers
-		subject: 'SnailDash: Account Verification', // Subject line
+		from: process.env.EMAIL_ADDRESS,
+		to: user.email,
+		subject: 'SnailDash: Account Verification',
 		html: `
-			<center><h1>SNAILDASH</h1></center>
-			<br>
+		<center><h1>SNAILDASH</h1></center>
+		<br>
 			<center>
 				<p>
 					Hi! It seems like you have registered a new account on snaildash,
 					Please click <a href="${ href }">here</a> to verify your account and
 					start using it!
 				</p>
-			</center>`// plain text body
+			</center>`
 	}
 
-	bcrypt.hash(user.password, saltRounds, function (err, hash) {
+	transporter.sendMail(mailOptions, function (err /*, info */) {
 		if (err) return next(err)
-
-		user.password = hash
-		transporter.sendMail(mailOptions, function (err /*, info */) {
-			if (err) return next(err)
-			next()
-		})
+		next()
 	})
 })
 
@@ -102,9 +106,7 @@ mongoose.model('User', UserSchema)
 
 // mongoose.model('User').ensureIndexes()
 
-////////////////////////////////////////////////////////////////////////////////
-
-function LocalStrategy (email, password, cb) {
+function LocalStrategy (req, email, password, cb) {
 	mongoose.model('User').findOne({ email }, function(err, user) {
 		if (err) return cb(err)
 		if (!user) return cb(null, false)
@@ -117,20 +119,21 @@ function LocalStrategy (email, password, cb) {
 	})
 }
 
-const localStrategy = new Strategy(LocalStrategy)
+////////////////////////////////////////////////////////////////////////////////
 
-function SerializeUser (user, cb) { cb(null, user.id) }
+passport.use(new Strategy({
+	usernameField: 'email',
+	passReqToCallback: true
+}, LocalStrategy))
 
-function DeserializeUser (id, cb) {
+passport.serializeUser((user, cb)=> cb(null, user.id))
+
+passport.deserializeUser(function (id, cb) {
 	mongoose.model('User').findById(id, function (err, user) {
 		if (err) cb(err)
 		else cb(null, user)
 	})
-}
-
-passport.use(localStrategy)
-passport.serializeUser(SerializeUser)
-passport.deserializeUser(DeserializeUser)
+})
 
 module.exports = function ({ router }) {
 	const sessionSettings = {

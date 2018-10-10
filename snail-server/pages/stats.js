@@ -1,5 +1,6 @@
 import React from 'react'
 import Router from 'next/router'
+import { Page } from '../components/page.js'
 
 export default class extends React.Component{
 	constructor(props, context){
@@ -9,12 +10,12 @@ export default class extends React.Component{
 	componentDidMount(){
 		if (!this.props.authenticated) {
 			Router.push('/login')
-		} 
+		}
 	}
 
 	render() {
-		return <div className="main-content">	
-			<p>a placeholder, i guess</p>	
-		</div>
+		return <Page title="Stats">
+			<p>a placeholder, i guess</p>
+		</Page>
 	}
 }

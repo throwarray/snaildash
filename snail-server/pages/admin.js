@@ -1,31 +1,19 @@
 import React from 'react'
+
 import Peer from 'simple-peer'
 
 import Error from 'next/error'
-import Router from 'next/router'
-import { isAuthenticated } from '../components/auth.js'
 
+import { Page } from '../components/page.js'
 
-export default class Page extends React.Component {
-	static async getInitialProps(context) {
-		if (context.req && context.req.headers && !isAuthenticated(context.req))
-			context.req.res.redirect('/login')
+import { withAuth } from '../components/session.js'
 
-		return {}
-	}
-
+export default withAuth(class extends React.Component {
 	constructor (props, context) {
 		super(props, context)
+
 		this.state = {}
 		this.pair = this.pair.bind(this)
-	}
-
-	// FIXME Got some race condition here
-	componentDidMount () {
-		setTimeout(()=>  {
-			if (!this.props.authenticated) Router.push('/login')
-			// else this.pair()
-		}, 1000)
 	}
 
 	createPeer (addr) {
@@ -45,7 +33,7 @@ export default class Page extends React.Component {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/x-www-form-urlencoded'
 				},
 				body: JSON.stringify({ uri: data })
 			})
@@ -121,9 +109,23 @@ export default class Page extends React.Component {
 
 	render () {
 		let status, showButton
+	
+		if (this.props.session === void 0) status = <div>
+			<noscript>
+				<article className="message is-danger">
+					<div className="message-body">
+						This site requires <strong>JavaScript</strong>. Please enable it to continue.
+					</div>
+				</article>
+			</noscript>
+			{!this.props.isServer && !this.props.exporting && <article className="message is-info">
+				<div className="message-body">
+					Loading...
+				</div>
+			</article>}
+		</div>
 
-		if (this.props.authenticated === void 0) status = 'Loading ...'
-		else if (!this.props.authenticated) status = <Error statusCode={403}/>
+		else if (!this.props.session) status = <Error statusCode={403}/>
 		else if (this.state.connecting) status = 'Connecting'
 		else if (this.state.connected) status = 'Connected'
 		else {
@@ -131,7 +133,7 @@ export default class Page extends React.Component {
 			showButton = true
 		}
 
-		return <div className='main-content'>
+		return <Page title="Admin">
 			{ status }
 			{ this.state.stats ?
 				<div>Health: { this.state.stats.health }</div>: null
@@ -139,6 +141,6 @@ export default class Page extends React.Component {
 			{ showButton?
 				<button onClick={this.pair}>PAIR</button> : null
 			}
-		</div>
+		</Page>
 	}
-}
+})

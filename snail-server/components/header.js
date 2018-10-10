@@ -2,12 +2,9 @@ import React from 'react'
 
 import Link from './link.js'
 
-import Router from 'next/router'
-
 import headerLogo from '../static/logo.png'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 
 const NavLink =  ({ children, ...props })=> {
 	const onClick = props.onClick
@@ -51,15 +48,11 @@ class Header extends React.PureComponent {
 
 	logout (e) {
 		e.preventDefault()
-
-		this.closeMenu()
-		this.props.logout().then(()=> {
-			Router.push({ pathname: '/', query: {} })
-		}, ()=> {})
+		this.props.logout()
 	}
 
 	render () {
-		const authenticated = !!(this.props.authenticated)
+		const authenticated = this.props.isAuthenticated
 		// const activePage = this.props.page
 
 		return <nav className="navbar is-fixed-top is-black" role="navigation" aria-label="main navigation">
@@ -86,13 +79,13 @@ class Header extends React.PureComponent {
 				</div>
 				<div className="navbar-end">
 					<NavLink onClick={this.closeMenu} prefetch href='/'>
-							Home
+						Home
+					</NavLink>
+					<NavLink onClick={this.closeMenu} prefetch={authenticated} href='/about'>
+						About
 					</NavLink>
 					<NavLink onClick={this.closeMenu} prefetch={authenticated} href='/admin'>
-							Dashboard
-					</NavLink>
-					<NavLink onClick={this.closeMenu} prefetch={authenticated} href='/stats'>
-							Stats
+						Dashboard
 					</NavLink>
 					{
 						authenticated? <Link key="login" activeClassName="active" scroll={false} href='/logout'>

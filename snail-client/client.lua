@@ -98,8 +98,8 @@ end
 
 local function DisplayHelpText(text)
 	AddTextEntry('MEOW_IM_A_KID', text)
-        BeginTextCommandDisplayHelp('MEOW_IM_A_KID')
-        EndTextCommandDisplayHelp(0,0,1,5000)
+	BeginTextCommandDisplayHelp('MEOW_IM_A_KID')
+	EndTextCommandDisplayHelp(0,0,1,5000)
 end
 
 RegisterNetEvent('snaildash:Welcome')
@@ -143,22 +143,56 @@ AddEventHandler('snaildash:Welcome', function (registered, verified)
 	onWelcome(registered, verified)
 end)
 
+<<<<<<< HEAD
 RegisterCommand("snail-register", function()
 		SendNUIMessage({start=true})
 		SetNuiFocus(true, true)
 end, false)
 
 --------------------------------------------------------------------------------
+=======
+>>>>>>> 96b039a5f7b8781418d0c1ec7b8a5c8b96d66638
 
+local nuiOpen = false
 local isReady = false
+
+function focusNUI (show)
+	nuiOpen = show == true
+	SetNuiFocus(nuiOpen, nuiOpen)
+	SendNUIMessage({ type = 'show', payload = nuiOpen })
+end
+
+RegisterCommand("snail-register", function()
+	if not isReady and not nuiOpen then
+		focusNUI(true)
+	end
+end, false)
+
+RegisterNUICallback('onmessage', function (action)
+	if action and action.type == 'register' then
+		local payload = action.payload
+
+		TriggerServerEvent('snaildash:Register', payload.email, payload.password)
+		focusNUI(false)
+	end
+end)
+
+--------------------------------------------------------------------------------
 
 function onWelcome (registered, verified)
 	if not registered and not verified then
+<<<<<<< HEAD
 		-- TriggerServerEvent('snaildash:Register', 'bob@gmail.com', '123456')
 		CreateThread(function()
 			while not registered then
 				DisplayHelpText("Hi! looks like you still aren't registered on snaildash! let's fix that, type /snail-register in chat!")
 				Wait(120000)
+=======
+		CreateThread(function()
+			while not registered do
+				DisplayHelpText("Hi! looks like you still aren't registered on snaildash! let's fix that, type /snail-register in chat!")
+				Wait(60000)
+>>>>>>> 96b039a5f7b8781418d0c1ec7b8a5c8b96d66638
 			end
 		end)
 	end
