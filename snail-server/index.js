@@ -24,10 +24,10 @@ const express = require('express')
 const router = express()
 const compression = require('compression')
 const server = require('http').createServer(router)
-// const io = require('socket.io')(server, { serveClient: false })
+const io = require('socket.io')(server, { serveClient: false })
 
 const cfg = {
-	// io,
+	io,
 	app,
 	server,
 	router,
@@ -39,7 +39,7 @@ if (!process.env.MONGO_URL) throw new Error('MISSING ENV VARIABLE [MONGO_URL]')
 
 require(safepath('./server/auth.js'))(cfg)
 
-//require(safepath('./server/io.js'))(cfg)
+require(safepath('./server/io.js'))(cfg)
 
 router.use(require(safepath('./server/routes.js')))
 
