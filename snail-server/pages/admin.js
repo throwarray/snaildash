@@ -33,7 +33,7 @@ export default withAuth(class extends React.Component {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/x-www-form-urlencoded'
 				},
 				body: JSON.stringify({ uri: data })
 			})
