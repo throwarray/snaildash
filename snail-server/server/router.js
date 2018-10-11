@@ -1,12 +1,5 @@
 const mongoose = require('mongoose')
-const { Router } = require('express')
-const { GetPlayerLicense, getPlayerRemotes } = require('./cfx/utils.js')
-const router = Router()
-const PlayerRemotes = getPlayerRemotes()
-const bodies = require('body-parser')
-
-router.use(bodies.urlencoded({ extended: true }))
-router.use(bodies.json())
+const { GetPlayerLicense, PlayerRemotes } = require('./cfx/utils.js')
 
 const refreshPlayer = ()=> {
 	const src = global.source
@@ -38,10 +31,7 @@ if (global.RegisterNetEvent) {
 }
 
 module.exports = function (cfg) {
-	const app = cfg.router
-
 	require('./auth/auth.js')(cfg)
+	require('./routes/user.js')(cfg)
 	require('./routes/pair.js')(cfg)
-
-	app.use(router)
 }

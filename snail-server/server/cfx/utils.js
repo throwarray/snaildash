@@ -73,6 +73,6 @@ module.exports = {
 	GetPlayerInstances,
 	GetPlayerLicense,
 	GetPlayerSteamId,
-	getPlayerRemotes: function () { return PlayerRemotes },
+	PlayerRemotes,
 	NOOP: function () {}
 }

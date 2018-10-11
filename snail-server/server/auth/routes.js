@@ -1,9 +1,8 @@
 const { format, parse } = require('url')
 const passport = require('passport')
 const mongoose = require('mongoose')
-const { getPlayerRemotes, GetPlayerLicense } = require('../cfx/utils.js')
-const { RedirectAuthn, RedirectNonAuthn, Session_RedirectNoScript } = require('./redirect.js')
-const PlayerRemotes = getPlayerRemotes()
+const { PlayerRemotes, GetPlayerLicense } = require('../cfx/utils.js')
+const { RedirectAuthn, Session_RedirectNoScript } = require('./redirect.js')
 
 function makeid () {
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -55,9 +54,6 @@ if (global.RegisterNetEvent) {
 }
 
 module.exports = function ({ router }) {
-	// Guard admin page
-	router.get('/admin', RedirectNonAuthn)
-
 	// Fetch session state
 	router.all('/session', function (req, res) {
 		if (!req.isAuthenticated()) res.json({ session: null })

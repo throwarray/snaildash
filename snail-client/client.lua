@@ -49,9 +49,10 @@ local function CreatePeer ()
 		end)
 
 		RegisterNetEvent('snaildash:Remote')
-		AddEventHandler('snaildash:Remote', function (data)
+		evtHandler = AddEventHandler('snaildash:Remote', function (data)
 			dispatch({ type = 'connect', payload = data })
 		end)
+
 
 		dispatch({ type = 'open' }, function (action)
 			local payload = action.payload
@@ -90,6 +91,8 @@ local function CreatePeer ()
 
 				Wait(100)
 			end
+
+			RemoveEventHandler(evtHandler)
 
 			return Citizen.CreateThread(CreatePeer)
 		end)

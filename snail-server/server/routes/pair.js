@@ -1,7 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // PAIR WRTC CLIENTS
-const { GetPlayerLicense, getPlayerRemotes } = require('../cfx/utils.js')
-const PlayerRemotes = getPlayerRemotes()
+const { GetPlayerLicense, PlayerRemotes } = require('../cfx/utils.js')
 
 if (global.RegisterNetEvent) { // Set initiator URI
 	global.RegisterNetEvent('snaildash:Remote')
