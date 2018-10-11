@@ -1,7 +1,6 @@
 @charset "utf-8";
 @import "~bulma/bulma";
 
-
 body {
 	margin: 0;
 }
@@ -10,28 +9,6 @@ body {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
-}
-
-.next-page-transitions {
-	min-height: inherit;
-}
-
-.page-transition-enter {
-	opacity: 0;
-}
-
-.page-transition-enter-active {
-	opacity: 1;
-	transition: opacity 300ms;
-}
-
-.page-transition-exit {
-	opacity: 1;
-}
-
-.page-transition-exit-active {
-	opacity: 0;
-	transition: opacity 300ms;
 }
 
 .button.is-large svg {

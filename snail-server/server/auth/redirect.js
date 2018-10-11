@@ -26,9 +26,7 @@ function RedirectNonAuthn (req, res, next) {
 }
 
 function Session_RedirectNoScript (req, res) {
-	const xhr = (req.body && req.body.xhr) || req.query && req.query.xhr
-
-	if (xhr) res.redirect('/session')
+	if (req.headers.accept === 'application/json') res.redirect('/session')
 	else redirectRequest(req)
 }
 

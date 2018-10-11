@@ -29,8 +29,8 @@ export default withoutAuth(class extends React.Component {
 
 		this.handleSubmit = this.handleSubmit.bind(this)
 
-		//if (!props.isServer && !props.exporting)
-		//props.router.replace(props.router, props.router.route, { shallow: true })
+		if (!props.isServer && !props.exporting)
+			props.router.replace(props.router, props.router.route, { shallow: true })
 	}
 
 	// Submit the form data
@@ -86,8 +86,8 @@ export default withoutAuth(class extends React.Component {
 					</div>
 
 					<article className="message is-danger">
-						<div className="message-body" style={{ display: (message && message.length) || (message && message.length) ? 'initial' : 'none' }}>
-							{ (message && message[0]) || message && message[0] }
+						<div className="message-body" style={{ display: message && message.length ? 'initial' : 'none' }}>
+							{ message }
 						</div>
 					</article>
 

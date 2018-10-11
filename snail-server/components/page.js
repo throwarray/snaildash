@@ -11,13 +11,6 @@ const Page = props => {
 		<Head>
 			{ props.title && <title key="title">{props.title}</title> }
 			<meta key="viewport" name="viewport" content="initial-scale=1.0, width=device-width" />
-			{/* <noscript key="transitions">
-				<style>{`
-				.page-transition-enter {
-				opacity: initial;
-			}
-			`}</style>
-		</noscript> */}
 		</Head>
 		{ props.children }
 	</div>

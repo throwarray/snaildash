@@ -71,9 +71,9 @@ module.exports = function ({ router }) {
 
 	router.post('/login', function (req, res, next) {
 		if (!req.isAuthenticated()) {
-			const xhr = req.body.xhr
 			const reject = (message = 'Invalid username or password')=> {
-				if (xhr) res.json({ session: null, message })
+				if (req.headers.accept === 'application/json')
+					res.json({ session: null, message })
 				else {
 					const dest = /* req._parsedUrl || */ parse(req.url, true)
 

@@ -2,13 +2,6 @@ import React from 'react'
 import { withRouter } from 'next/router'
 
 export default withRouter(class extends React.Component {
-	static async getInitialProps() {
-		return {
-			potato: true
-		}
-	}
-
-
 	constructor (props, context) {
 		super(props, context)
 

@@ -20,11 +20,7 @@ export function formBody (obj) {
 
 export async function fetchSession () {
 	const res = await fetch('/session', {
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/x-www-form-urlencoded'
-		},
-		body: formBody({ xhr: true }),
+		headers: { 'Accept': 'application/json' },
 		method: 'POST'
 	})
 
@@ -35,11 +31,7 @@ export async function fetchSession () {
 
 export async function logout () {
 	const res = await fetch('/logout', {
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/x-www-form-urlencoded'
-		},
-		body: formBody({ xhr: true }),
+		headers: { 'Accept': 'application/json' },
 		method: 'POST'
 	})
 
@@ -54,7 +46,7 @@ export async function login (creds) {
 			'Accept': 'application/json',
 			'Content-Type': 'application/x-www-form-urlencoded'
 		},
-		body: formBody({ ...creds, xhr: true }),
+		body: formBody({ ...creds }),
 		method: 'POST'
 	})
 
