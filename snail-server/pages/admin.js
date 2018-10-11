@@ -6,7 +6,7 @@ import Error from 'next/error'
 
 import { Page } from '../components/page.js'
 
-import { withAuth, formBody } from '../components/session.js'
+import { withAuth } from '../components/session.js'
 
 export default withAuth(class extends React.Component {
 	constructor (props, context) {
@@ -29,13 +29,15 @@ export default withAuth(class extends React.Component {
 		peer.on('signal', function (data) {
 			console.log('peer-pairing')
 
+			if (typeof data === 'string') data = JSON.parse(data)
+
 			fetch('/pair', {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
-					'Content-Type': 'application/x-www-form-urlencoded'
+					'Content-Type': 'application/json'
 				},
-				body: formBody({ uri: data })
+				body: JSON.stringify({ uri: data })
 			})
 		})
 

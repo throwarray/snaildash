@@ -1,34 +1,12 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-const nodemailer = require('nodemailer')
 const flash = require('connect-flash')
 const passport = require('passport')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const cookieParser = require('cookie-parser')()
 const { Strategy } = require('passport-local')
-
-const transporter = process.env.SMTP_SERVER_ADDRESS? nodemailer.createTransport({
-	host: process.env.SMTP_SERVER_ADDRESS,
-	port: process.env.SMTP_SERVER_PORT,
-	secure: true,
-	auth: {
-		user: process.env.EMAIL_ADDRESS,
-		pass: process.env.EMAIL_PASSWORD
-	},
-	dkim: {
-		domainName: process.env.DOMAIN_ADDRESS,
-		keySelector: process.env.DKIM_SELECTOR,
-		privateKey: process.env.DKIM_KEY.replace(/\\n/g, '\n')
-	}
-}) : nodemailer.createTransport({
-	service: 'gmail',
-	auth: {
-		user: process.env.EMAIL_ADDRESS,
-		pass: process.env.EMAIL_PASSWORD
-	}
-})
-
+const email = require('./email.js')
 const Schema = mongoose.Schema
 
 const UserSchema = Schema({
@@ -72,23 +50,7 @@ UserSchema.post('save', function (user, next) {
 	const href = process.env.APPLICATION_URL +
 		'/user/verify/?token=' + user.token + '&email=' + user.email
 
-	const mailOptions = {
-		from: process.env.EMAIL_ADDRESS,
-		to: user.email,
-		subject: 'SnailDash: Account Verification',
-		html: `
-		<center><h1>SNAILDASH</h1></center>
-		<br>
-			<center>
-				<p>
-					Hi! It seems like you have registered a new account on snaildash,
-					Please click <a href="${ href }">here</a> to verify your account and
-					start using it!
-				</p>
-			</center>`
-	}
-
-	transporter.sendMail(mailOptions, function (err /*, info */) {
+	email.sendRegistrationEmail({ to: user.email, href }, function (err) {
 		if (err) return next(err)
 		next()
 	})
@@ -135,7 +97,8 @@ passport.deserializeUser(function (id, cb) {
 	})
 })
 
-module.exports = function ({ router }) {
+module.exports = function (cfg) {
+	const { router } = cfg
 	const sessionSettings = {
 		key: 'session',
 		cookieName: 'session',
@@ -150,4 +113,5 @@ module.exports = function ({ router }) {
 	router.use(flash())
 	router.use(passport.initialize())
 	router.use(passport.session())
+	require('./routes.js')(cfg)
 }
