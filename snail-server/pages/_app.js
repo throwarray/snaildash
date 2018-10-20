@@ -127,7 +127,18 @@ export default class MyApp extends App {
 		const hasWindow = typeof window !== 'undefined'
 
 		return loading || hasWindow && Session.session === void 0 ?
-			<Layout title="Loading">Loading...</Layout>:
+			<Layout title="Loading">
+				<div>Loading...</div>
+				<style jsx>{`
+					div {
+						background: ghostwhite;
+						height: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+					}
+				`}</style>
+			</Layout>:
 			<React.Fragment>
 				{ children }
 			</React.Fragment>

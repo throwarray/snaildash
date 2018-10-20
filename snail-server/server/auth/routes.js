@@ -2,7 +2,7 @@ const { format, parse } = require('url')
 const passport = require('passport')
 const mongoose = require('mongoose')
 const { PlayerRemotes, GetPlayerLicense } = require('../cfx/utils.js')
-const { RedirectAuthn, Session_RedirectNoScript } = require('./redirect.js')
+const { RedirectAuthn, redirectRequest } = require('./redirect.js')
 
 function makeid () {
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -53,15 +53,28 @@ if (global.RegisterNetEvent) {
 	})
 }
 
-module.exports = function ({ router }) {
+module.exports = function (cfg) {
+	const { router } = cfg
+
+	function SendSession (req, res) {
+		if (!req.isAuthenticated())
+			res.json({ session: null })
+		else
+			res.json({ session: { user: req.user } })
+	}
+
+	function Session_RedirectNoScript (req, res) {
+		if (req.headers.accept === 'application/json')
+			SendSession(req, res)
+		else redirectRequest(req)
+	}
+
 	// Fetch session state
-	router.all('/session', function (req, res) {
-		if (!req.isAuthenticated()) res.json({ session: null })
-		else res.json({ session: { user: req.user } })
-	})
+	router.all('/session', SendSession)
 
 	// Add logout route
 	router.all('/logout', function (req, res, next) {
+		if (cfg.handleLogout) cfg.handleLogout(req)
 		req.logout()
 		next()
 	}, Session_RedirectNoScript)
@@ -96,7 +109,7 @@ module.exports = function ({ router }) {
 	}, Session_RedirectNoScript)
 
 	// Verify email
-	router.get('/user/verify', (req,res) => {
+	router.get('/auth/verify', (req,res) => {
 		const token = req.query.token
 		const email = req.query.email
 
@@ -109,15 +122,13 @@ module.exports = function ({ router }) {
 				return res.redirect('/login?message=Invalid%20verification')
 			}
 
-			res.redirect('/login?message=Account&verified')
+			res.redirect('/login?verified&message=Account%20verified')
 
 			const client = PlayerRemotes[result.license]
 
 			if (client) setImmediate(function () {
 				global.emitNet('snaildash:Verify', client.source, false, true)
 			})
-
-			// console.log(`VERIFIED USER: ${ email }`)
 		})
 	})
 }

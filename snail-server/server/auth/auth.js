@@ -48,7 +48,7 @@ UserSchema.pre('save', function (next) {
 
 UserSchema.post('save', function (user, next) {
 	const href = process.env.APPLICATION_URL +
-		'/user/verify/?token=' + user.token + '&email=' + user.email
+		'/auth/verify/?token=' + user.token + '&email=' + user.email
 
 	email.sendRegistrationEmail({ to: user.email, href }, function (err) {
 		if (err) return next(err)
@@ -108,8 +108,10 @@ module.exports = function (cfg) {
 		saveUninitialized: false
 	}
 
+	cfg.sessionParser = session(sessionSettings)
+
 	router.use(cookieParser)
-	router.use(session(sessionSettings))
+	router.use(cfg.sessionParser)
 	router.use(flash())
 	router.use(passport.initialize())
 	router.use(passport.session())
