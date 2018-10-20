@@ -1,6 +1,6 @@
 const WebSocket = require('ws')
 const passport = require('passport')
-// const { PlayerRemotes } = require('./cfx/utils.js')
+const { Player, GetPlayerInstances } = require('./cfx/utils.js')
 
 module.exports = function (cfg) {
 	const { sessionParser } = cfg
@@ -46,7 +46,7 @@ module.exports = function (cfg) {
 	setInterval(function () {
 		wss.clients.forEach(function (ws) {
 			if (ws.isAlive === false) {
-				console.log('ws disconnection from', ws.remoteAddress)
+				// console.log('ws disconnection from', ws.remoteAddress)
 
 				return ws.terminate()
 			}
@@ -63,7 +63,7 @@ module.exports = function (cfg) {
 
 		for(let client of wss.clients) {
 			if (client.sessionID === sessionID) {
-				console.log('ws disconnection from', client.remoteAddress)
+				// console.log('ws disconnection from', client.remoteAddress)
 
 				client.terminate()
 
@@ -75,6 +75,7 @@ module.exports = function (cfg) {
 	// A user connected
 	wss.on('connection', function (ws, req) {
 		const ip = req.connection.remoteAddress
+		// const license = req.user.license
 
 		ws.remoteAddress = ip
 		ws.sessionID = req.sessionID
@@ -92,11 +93,39 @@ module.exports = function (cfg) {
 			if (typeof message === 'string') console.log('received: %s', message)
 		})
 
-		console.log('ws connection from', ip)
+		// console.log('ws connection from', ip)
 
-		ws.send('Welcome')
+		// Broadcast initial player list
+		ws.send(JSON.stringify({
+			type: 'init',
+			payload: {
+				players: global.onNet? GetPlayerInstances() : []
+			}
+		}))
 	})
 
+	// Broadcast player joined | dropped events
+	setImmediate(function () {
+		if (!global.onNet) return
+
+		global.onNet('playerDropped', function () {
+			const src = global.source
+
+			wss.broadcast(JSON.stringify({
+				type: 'playerDropped',
+				payload: Player(src)
+			}))
+		})
+
+		global.onNet('hardcap:playerActivated', function () {
+			const src = global.source
+
+			wss.broadcast(JSON.stringify({
+				type: 'playerActivated',
+				payload: Player(src)
+			}))
+		})
+	})
 
 	Object.assign(cfg, { wss })
 }
