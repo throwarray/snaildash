@@ -118,7 +118,7 @@ module.exports = function (cfg) {
 			token: void 0
 		}, (err, result) => {
 
-			if (typeof result === void 0 || err) {
+			if (result === void 0 || result === null || err) {
 				return res.redirect('/login?message=Invalid%20verification')
 			}
 
