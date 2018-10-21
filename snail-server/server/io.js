@@ -77,6 +77,8 @@ module.exports = function (cfg) {
 		const ip = req.connection.remoteAddress
 		// const license = req.user.license
 
+		const isAdmin = req.user && req.user.isAdmin
+
 		ws.remoteAddress = ip
 		ws.sessionID = req.sessionID
 		ws.isAlive = true
@@ -90,7 +92,35 @@ module.exports = function (cfg) {
 			// 	else onMessage()
 			// })
 
-			if (typeof message === 'string') console.log('received: %s', message)
+			if (typeof message === 'string')
+			{
+				let action
+				try {
+					action = JSON.parse(message)
+				}
+				catch(e) {
+					return
+				}
+
+				if (action) {
+					// Received kick player
+					if (action.type === 'dropPlayer') {
+						const src = action.payload
+
+						setImmediate(function () {
+							if (global.GetNumPlayerIdentifiers(src)) {
+								// const player = Player(src)
+
+								if (isAdmin) { // NOTE not refreshing isAdmin
+									// console.log('kicking player', player.name)
+
+									global.DropPlayer(src, 'You were kicked from the game.')
+								}
+							}
+						})
+					}
+				}
+			}
 		})
 
 		// console.log('ws connection from', ip)
@@ -117,11 +147,20 @@ module.exports = function (cfg) {
 			}))
 		})
 
-		global.onNet('hardcap:playerActivated', function () {
+		// global.onNet('hardcap:playerActivated', function () {
+		// 	const src = global.source
+		//
+		// 	wss.broadcast(JSON.stringify({
+		// 		type: 'playerActivated',
+		// 		payload: Player(src)
+		// 	}))
+		// })
+
+		global.onNet('playerConnecting', function () {
 			const src = global.source
 
 			wss.broadcast(JSON.stringify({
-				type: 'playerActivated',
+				type: 'playerConnecting',
 				payload: Player(src)
 			}))
 		})

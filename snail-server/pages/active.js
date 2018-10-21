@@ -45,6 +45,8 @@ export default class extends Component {
 		this.onOpen = this.onOpen.bind(this)
 		this.onClose = this.onClose.bind(this)
 		this.onMessage = this.onMessage.bind(this)
+		this.dropPlayer = this.dropPlayer.bind(this)
+
 		this.state = {
 			status: 'disconnected',
 			players: []
@@ -67,14 +69,23 @@ export default class extends Component {
 					})
 				})
 			},
-			playerActivated: ({ payload }) => {
-				// console.log('Player activated', payload.name)
+			playerConnecting: ({ payload }) => {
+				let updated = false
+
+				const players = this.state.players.map(function (player) {
+					if (player.guid == payload.guid)  {
+						updated = true
+						return payload
+					} else return player
+				})
+
+				if (!updated) {
+					players.push(payload)
+					// console.log('Player activated', payload.name)
+				}
 
 				this.setState({
-					players: [
-						...this.state.players,
-						payload
-					]
+					players
 				})
 			}
 		})
@@ -97,6 +108,14 @@ export default class extends Component {
 		this.update({ status: 'connecting' })
 	}
 
+	dropPlayer (evt) {
+		if (evt.target && evt.target.hasAttribute('data-id'))
+			this.ws.send(JSON.stringify({
+				type: 'dropPlayer',
+				payload: Number(evt.target.getAttribute('data-id'))
+			}))
+	}
+
 	componentWillUnmount () {
 		const ws = this.ws
 
@@ -116,7 +135,7 @@ export default class extends Component {
 						color: #fff;
 					}
 				`}</style>
-				Connection status { this.state.status }
+				Connection status: { this.state.status }
 			</div>
 
 			{
@@ -163,7 +182,9 @@ export default class extends Component {
 								</div>
 							}) }
 						</div>
-						{/* <button className={'kick'}>🦶</button> */}
+						<button data-id={player.id} className={'kick'} onClick={ this.dropPlayer }>
+							🦶
+						</button>
 					</div>
 				)
 			}
